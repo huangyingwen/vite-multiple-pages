@@ -1,0 +1,9 @@
+*.vue    eol=lf
+*.json   eol=lf
+*.yaml   eol=lf
+*.ts     eol=lf
+*.tsx    eol=lf
+*.less   eol=lf
+*.css    eol=lf
+*.svg    eol=lf
+*.html   eol=lf
