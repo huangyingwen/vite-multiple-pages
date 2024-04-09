@@ -1,18 +1,87 @@
-import { defineConfig } from 'vite';
+import { defineConfig, PluginOption } from 'vite';
 import path from 'path';
 import postCssPxToRem from 'postcss-pxtorem';
 import svgLoader from 'vite-svg-loader';
-import mpa from 'vite-plugin-multi-pages';
+import { globSync } from 'glob';
+import ejs from 'ejs';
+import fs from 'fs/promises';
+
+function kk(opts: {
+  template: string;
+  input: string;
+  filename: string;
+  inject?: { [key in string]: any };
+}): PluginOption {
+  const files = globSync(opts.input, {
+    cwd: __dirname,
+  }).map(f => ({ entry: `${f}/${opts.filename}`, name: f.split('/').reverse()[0] }));
+
+  let isDev = false;
+
+  const htmls: string[] = [];
+  return {
+    name: 'my-example', // 此名称将出现在警告和错误中
+    options: options => {
+      options.input = files.reduce((input, { name }) => {
+        input[name] = `${name}.html`;
+        return input;
+      }, {});
+      return options;
+    },
+    config: async (_config, { command }) => {
+      isDev = command !== 'build';
+      if (isDev) return;
+
+      await Promise.all(
+        files.map(async ({ name, entry }) => {
+          const html = await ejs.renderFile(opts.template, {
+            title: name,
+            ...opts.inject,
+            script: `<script type="module" crossorigin src="${entry}"></script>`,
+          });
+          htmls.push(path.resolve(__dirname, `${name}.html`));
+          await fs.writeFile(`${name}.html`, html);
+        }),
+      );
+    },
+    load: id => {
+      if (htmls.includes(id)) {
+        fs.rm(id);
+      }
+    },
+    transformIndexHtml: {
+      order: 'pre',
+      handler: async (html, ctx) => {
+        if (!isDev) return html;
+        const url = new URL(ctx.originalUrl, ctx.server.resolvedUrls.local[0]);
+
+        let filename = url.pathname;
+        if (filename.startsWith(`/`)) {
+          filename = filename.substring(1);
+        }
+        if (filename.endsWith('/')) {
+          filename = filename.substring(0, filename.length - 1);
+        }
+
+        const file = files.find(a => a.name === filename);
+        if (file) {
+          return ejs.renderFile(opts.template, {
+            title: file.name,
+            script: `<script type="module" crossorigin src="${file.entry}"></script>`,
+          });
+        }
+
+        return html;
+      },
+    },
+  };
+}
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     svgLoader(),
-    mpa({
-      scanDir: 'src/pages',
-      defaultOpenPage: '/',
-      ignorePageNames: '',
-    }),
+    kk({ input: `./src/pages/*`, filename: 'index.ts', template: './public/template.html' }),
   ],
   css: {
     postcss: {
