@@ -7,9 +7,9 @@ import {
   Viewer,
 } from 'cesium';
 import 'cesium/Build/Cesium/Widgets/widgets.css';
+import { ION_TOKEN } from '@/consts';
 
-Ion.defaultAccessToken =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI0OTYwYzQ1YS1mMTM5LTRkNTMtOWE0YS1iNTM0YjYzMmQ3ODEiLCJpZCI6MjA3NTU0LCJpYXQiOjE3MTI2NTI5NTN9.JbroAkWr3IkejxsKf6pte9kA0h9aSVdkbHRlr9q_xwc';
+Ion.defaultAccessToken = ION_TOKEN;
 
 (async () => {
   const cesiumContainer = document.createElement('div');
