@@ -11,7 +11,8 @@
     "lint": "lint-staged"
   },
   "dependencies": {
-    "@babylonjs/core": "^7.1.0"
+    "@babylonjs/core": "^7.1.0",
+    "cesium": "^1.116.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.8.1",
@@ -51,6 +52,7 @@
     "stylelint-order": "~6.0.4",
     "typescript": "^5.4.4",
     "vite": "^5.0.0",
+    "vite-plugin-cesium-build": "^0.3.0",
     "vite-svg-loader": "^4.0.0",
     "vue-eslint-parser": "~9.3.1"
   },

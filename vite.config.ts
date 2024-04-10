@@ -5,6 +5,7 @@ import svgLoader from 'vite-svg-loader';
 import { globSync } from 'glob';
 import ejs from 'ejs';
 import fs from 'fs/promises';
+import cesium from 'vite-plugin-cesium-build';
 
 function kk(opts: {
   template: string;
@@ -14,7 +15,10 @@ function kk(opts: {
 }): PluginOption {
   const files = globSync(opts.input, {
     cwd: __dirname,
-  }).map(f => ({ entry: `${f}/${opts.filename}`, name: f.split('/').reverse()[0] }));
+  }).map(f => ({
+    entry: `${f}/${opts.filename}`,
+    name: f.split('/').reverse()[0],
+  }));
 
   let isDev = false;
 
@@ -80,9 +84,15 @@ function kk(opts: {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
+    cesium(),
     svgLoader(),
-    kk({ input: `./src/pages/*`, filename: 'index.ts', template: './public/template.html' }),
+    kk({
+      input: `./src/pages/*`,
+      filename: 'index.ts',
+      template: './public/template.html',
+    }),
   ],
+  optimizeDeps: {},
   css: {
     postcss: {
       plugins: [
@@ -100,8 +110,7 @@ export default defineConfig({
    */
   // outDir: 'dist',
   server: {
-    // hostname: '0.0.0.0',
-    host: 'localhost',
+    host: '0.0.0.0',
     port: 3333,
     // // 是否自动在浏览器打开
     // open: true,
