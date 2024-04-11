@@ -1,6 +1,5 @@
 import { defineConfig, PluginOption } from 'vite';
 import path from 'path';
-import postCssPxToRem from 'postcss-pxtorem';
 import svgLoader from 'vite-svg-loader';
 import { globSync } from 'glob';
 import ejs from 'ejs';
