@@ -16,6 +16,8 @@ import {
 } from 'cesium';
 
 import 'cesium/Build/Cesium/Widgets/widgets.css';
+import xiangziUrl from '../../assets/xiangzi.glb?url';
+import xiangziOrgUrl from '../../assets/xiangzi-org.glb?url';
 
 Ion.defaultAccessToken = ION_TOKEN;
 
@@ -86,14 +88,15 @@ Ion.defaultAccessToken = ION_TOKEN;
   // STEP 6 CODE (airplane entity)
   async function loadModel() {
     // Load the glTF model from Cesium ion.
-    const airplaneUri = await IonResource.fromAssetId(2532294);
+    // const airplaneUri = await IonResource.fromAssetId(2532294);
+
     const airplaneEntity = viewer.entities.add({
       availability: new TimeIntervalCollection([
         new TimeInterval({ start, stop }),
       ]),
       position: positionProperty,
       // Attach the 3D model instead of the green point.
-      model: { uri: airplaneUri },
+      model: { uri: xiangziOrgUrl },
       // Automatically compute the orientation from the position.
       orientation: new VelocityOrientationProperty(positionProperty),
       path: new PathGraphics({ width: 3 }),
