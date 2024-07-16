@@ -212,6 +212,7 @@ export default async function rendering() {
         interval: '2015-01-01T00:00:00Z/2015-01-01T00:25:00Z',
         currentTime: '2015-01-01T00:00:00Z',
         multiplier: 20,
+        range: 'CLAMPED',
       },
     },
     {

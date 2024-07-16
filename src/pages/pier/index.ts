@@ -3,7 +3,7 @@
 
 // import './index-primitives';
 
-// import './test';
+import './test';
 
-import rendering from './test2';
-rendering();
+// import rendering from './test2';
+// rendering();
