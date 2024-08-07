@@ -5,6 +5,7 @@ import { globSync } from 'glob';
 import ejs from 'ejs';
 import fs from 'fs/promises';
 import cesium from 'vite-plugin-cesium-build';
+import vue from '@vitejs/plugin-vue';
 
 function kk(opts: {
   template: string;
@@ -84,6 +85,7 @@ function kk(opts: {
 export default defineConfig({
   plugins: [
     cesium(),
+    vue(),
     svgLoader(),
     kk({
       input: `./src/pages/*`,
