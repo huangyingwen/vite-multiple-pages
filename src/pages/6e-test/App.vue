@@ -4,49 +4,60 @@ import { onMounted, ref } from 'vue';
 import loadMap from './loadMap';
 import dayjs from 'dayjs';
 import { getColor } from './utils';
+import CirclePulseMaterialProperty from './CirclePulseMaterialProperty';
 
 const refMap = ref<HTMLElement>();
 let mapviewer: ReturnType<typeof loadMap>;
 let timeId;
-const dayCount = ref(1);
+const dayCount = ref(346);
+const startDay = dayjs('2023-09-01');
 const countNum = ref(0);
-let start = dayjs('2024-01-05 00:00:00');
-let end = dayjs('2024-01-05 00:10:00');
+let start = dayjs('2024-08-09  20:28:00');
 
 const entities: Record<string, { entity: Cesium.Entity; count: number }> = {};
 
-onMounted(() => {
+onMounted(async () => {
   mapviewer = loadMap(refMap.value!);
-  getData();
+  // await initData();
+  //
+  await getData();
 });
 
-const getData = async () => {
-  start.add(10, 'm');
-  end.add(10, 'm');
+const initData = async () => {
   try {
-    const res = await fetch(
-      `http://192.168.1.12:5229/webapi/GetShipCountList?reso=0.0002&start=${start.format(
-        'YYYY-MM-DD HH:mm:ss',
-      )}&end=${end.format('YYYY-MM-DD HH:mm:ss')}`,
-      { credentials: 'same-origin', mode: 'cors' },
-    );
-    const data = await res.json();
+    // const res = await fetch(
+    //   `http://192.168.1.12:5229/webapi/GetShipCountList?reso=1&start=${start.format(
+    //     'YYYY-MM-DD HH:mm:ss',
+    //   )}&end=${end.format('YYYY-MM-DD HH:mm:ss')}`,
+    //   { credentials: 'same-origin', mode: 'cors' },
+    // );
 
-    data.forEach(({ x, y, count }) => {
+    // const res = await fetch(
+    //   `http://192.168.1.12:5229/webapi/GetShipCountList1?reso=0.01&start=2023-09-05%2000:00:00&end=2023-09-05%2001:00:00&lon1=121.04&lon2=128.63&lat1=31.98&lat2=27.74`,
+    //   { credentials: 'same-origin', mode: 'cors' },
+    // );
+
+    const res = await fetch(`http://192.168.1.12:5229/webapi/GetShipHistory`, {
+      credentials: 'same-origin',
+      mode: 'cors',
+    });
+
+    dayCount.value++;
+
+    const data: Array<{
+      x: string;
+      y: string;
+      count: number;
+    }> = await res.json();
+
+    let index = 0;
+    for (let { x, y, count } of data) {
+      index++;
       countNum.value += count;
       const key = `${x}-${y}`;
-      if (entities[key]) {
-        entities[key].count += count;
-
-        entities[key].entity.point = new Cesium.PointGraphics({
-          color: Cesium.Color.fromCssColorString(getColor(entities[key].count)),
-          pixelSize: 5,
-        });
-        return;
-      }
 
       const entity = mapviewer.entities.add({
-        position: Cesium.Cartesian3.fromDegrees(x * 0.0002, y * 0.0002, 0),
+        position: Cesium.Cartesian3.fromDegrees(Number(x), Number(y), 0),
         point: {
           color: Cesium.Color.fromCssColorString(getColor(count)),
           pixelSize: 5,
@@ -54,14 +65,100 @@ const getData = async () => {
       });
 
       entities[key] = { entity, count };
-    });
 
-    dayCount.value++;
+      if (index % 1000 === 0) {
+        await new Promise(resolve => setTimeout(() => resolve(0), 1000));
+      }
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+const getData = async () => {
+  try {
+    // const res = await fetch(
+    //   `http://192.168.1.12:5229/webapi/GetShipCountList?reso=1&start=${start.format(
+    //     'YYYY-MM-DD HH:mm:ss',
+    //   )}&end=${end.format('YYYY-MM-DD HH:mm:ss')}`,
+    //   { credentials: 'same-origin', mode: 'cors' },
+    // );
+    // const res = await fetch(
+    //   `http://192.168.1.12:5229/webapi/GetShipCountListNow?reso=0.01&start=${start.unix()}&end=${end.unix()}&lon1=121.04&lon2=128.63&lat1=31.98&lat2=27.74`,
+    //   { credentials: 'same-origin', mode: 'cors' },
+    // );
+    //
+    const current = Date.now();
+
+    const res = await fetch(
+      `http://192.168.1.12:5229/webapi/SetShipNow?start=${start.format(
+        'YYYY-MM-DD HH:mm:ss',
+      )}`,
+      { credentials: 'same-origin', mode: 'cors' },
+    );
+
+    start = dayjs(current);
+
+    dayCount.value = dayjs().diff(startDay, 'd');
+
+    const data: Array<{
+      x: string;
+      y: string;
+      count: number;
+      count_new: number;
+    }> = await res.json();
+
+    let index = 0;
+    for (let { x, y, count, count_new } of data) {
+      index++;
+      countNum.value += count_new;
+      const key = `${x}-${y}`;
+      if (entities[key]) {
+        entities[key].count = count + count_new;
+
+        entities[key].entity.point = new Cesium.PointGraphics({
+          color: Cesium.Color.fromCssColorString(getColor(entities[key].count)),
+          pixelSize: 2,
+        });
+        continue;
+      }
+
+      const entity = mapviewer.entities.add({
+        position: Cesium.Cartesian3.fromDegrees(Number(x), Number(y), 0),
+        point: {
+          color: Cesium.Color.fromCssColorString(getColor(count + count_new)),
+          pixelSize: 2,
+        },
+      });
+
+      entities[key] = { entity, count: count + count_new };
+
+      const kk = mapviewer.entities.add({
+        position: Cesium.Cartesian3.fromDegrees(Number(x), Number(y), 0),
+        name: '模糊圆2',
+        ellipse: {
+          semiMinorAxis: 8000.0,
+          semiMajorAxis: 8000.0,
+          material: new CirclePulseMaterialProperty({
+            color: Cesium.Color.fromCssColorString(getColor(count + count_new)),
+            speed: 12.0,
+          }),
+        },
+      });
+
+      setTimeout(() => {
+        mapviewer.entities.remove(kk);
+      }, 1000 * 3);
+
+      if (index % 10 === 0) {
+        await new Promise(resolve => setTimeout(() => resolve(0), 1000 * 6));
+      }
+    }
   } catch (e) {
     console.log(e);
   }
 
-  timeId = setTimeout(getData, 1000 * 60 * 5);
+  timeId = setTimeout(getData, 1000);
 };
 </script>
 
@@ -74,12 +171,7 @@ const getData = async () => {
       </div>
 
       <div class="day-count">
-        <div class="day-count-wrap">
-          <div class="day-count-4">{{ dayCount.toString()[3] || '' }}</div>
-          <div class="day-count-3">{{ dayCount.toString()[2] || '' }}</div>
-          <div class="day-count-2">{{ dayCount.toString()[1] || '' }}</div>
-          <div class="day-count-1">{{ dayCount.toString()[0] || '' }}</div>
-        </div>
+        <div class="day-count-wrap">{{ dayCount }}</div>
       </div>
       <div class="data-count">
         <div class="data-count-title">数据统计</div>
@@ -124,10 +216,9 @@ div {
 
   .header2 {
     display: flex;
-    height: 92px;
-    padding: 36px 15px 0;
+    height: 60px;
+    padding: 16px 8px;
     align-items: center;
-    margin-top: 8px;
 
     &-left {
       flex: 1;
@@ -154,10 +245,12 @@ div {
       .day-count-wrap {
         position: absolute;
         top: 15px;
-        left: 146px;
+        right: 22px;
         display: flex;
-
-        width: 120px;
+        // width: 120px;
+        letter-spacing: 14px;
+        padding-left: 5px;
+        text-align: right;
 
         div {
           text-align: center;
@@ -199,7 +292,7 @@ div {
   .cssc-map {
     flex: 1;
     height: 100px;
-    padding: 15px;
+    padding: 8px;
   }
 }
 </style>

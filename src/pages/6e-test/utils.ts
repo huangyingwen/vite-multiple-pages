@@ -1,6 +1,11 @@
+// function rgbToHex(r, g, b) {
+//   var hex = ((r << 16) | (g << 8) | b).toString(16);
+//   return '#' + new Array(Math.abs(hex.length - 7)).join('0') + hex;
+// }
+
+const bb = [];
 function rgbToHex(r, g, b) {
-  var hex = ((r << 16) | (g << 8) | b).toString(16);
-  return '#' + new Array(Math.abs(hex.length - 7)).join('0') + hex;
+  bb.push([r, g, b]);
 }
 
 function hexToRgb(hex) {
@@ -35,28 +40,53 @@ export function gradient(startColor, endColor, step) {
   return gradientColorArr;
 }
 
-const colors = gradient('#00FF00', '#880808', 11);
+export function getColors() {
+  const colors = [];
+  for (let i = 0; i < 6; i++) {
+    for (let j = 0; j <= 256; j += 4) {
+      if (i === 0 && j >= 128) {
+        colors.push(rgbToHex(0, 0, j > 255 ? 255 : j));
+      } else if (i === 1 && j > 2 && j <= 252) {
+        colors.push(rgbToHex(0, j > 255 ? 255 : j, 255));
+      } else if (i === 2 && j >= 2 && j < 254) {
+        colors.push(
+          rgbToHex(j > 255 ? 255 : j - 2, 255, 258 - j < 0 ? 0 : 258 - j),
+        );
+      } else if (i === 3 && j > 0) {
+        colors.push(rgbToHex(255, 256 - j, 0));
+      } else if (i === 4 && j > 0 && j <= 128) {
+        colors.push(rgbToHex(256 - j, 0, 0));
+      }
+    }
+  }
+}
+
+const colors = getColors();
 
 export function getColor(count: number) {
-  if (count < 10) {
+  return colors[
+    Math.floor(Math.min(254, (254 * Math.log(count)) / Math.log(65536)))
+  ];
+
+  if (count < 20) {
     return colors[0];
-  } else if (count < 20) {
-    return colors[1];
-  } else if (count < 30) {
-    return colors[2];
   } else if (count < 40) {
-    return colors[3];
-  } else if (count < 50) {
-    return colors[4];
+    return colors[1];
   } else if (count < 60) {
-    return colors[5];
-  } else if (count < 70) {
-    return colors[6];
+    return colors[2];
   } else if (count < 80) {
-    return colors[7];
-  } else if (count < 90) {
-    return colors[8];
+    return colors[3];
   } else if (count < 100) {
+    return colors[4];
+  } else if (count < 120) {
+    return colors[5];
+  } else if (count < 140) {
+    return colors[6];
+  } else if (count < 160) {
+    return colors[7];
+  } else if (count < 180) {
+    return colors[8];
+  } else if (count < 200) {
     return colors[9];
   } else {
     return colors[10];
