@@ -5,13 +5,14 @@ import loadMap from './loadMap';
 import dayjs from 'dayjs';
 import { getColor } from './utils';
 import CirclePulseMaterialProperty from './CirclePulseMaterialProperty';
+import numberFormat from './numberFormat';
 
 const refMap = ref<HTMLElement>();
 let mapviewer: ReturnType<typeof loadMap>;
 let timeId;
 const dayCount = ref(346);
 const startDay = dayjs('2023-09-01');
-const countNum = ref(0);
+const countNum = ref(1000000);
 let start = dayjs('2024-08-09  20:28:00');
 
 const entities: Record<string, { entity: Cesium.Entity; count: number }> = {};
@@ -25,18 +26,6 @@ onMounted(async () => {
 
 const initData = async () => {
   try {
-    // const res = await fetch(
-    //   `http://192.168.1.12:5229/webapi/GetShipCountList?reso=1&start=${start.format(
-    //     'YYYY-MM-DD HH:mm:ss',
-    //   )}&end=${end.format('YYYY-MM-DD HH:mm:ss')}`,
-    //   { credentials: 'same-origin', mode: 'cors' },
-    // );
-
-    // const res = await fetch(
-    //   `http://192.168.1.12:5229/webapi/GetShipCountList1?reso=0.01&start=2023-09-05%2000:00:00&end=2023-09-05%2001:00:00&lon1=121.04&lon2=128.63&lat1=31.98&lat2=27.74`,
-    //   { credentials: 'same-origin', mode: 'cors' },
-    // );
-
     const res = await fetch(`http://192.168.1.12:5229/webapi/GetShipHistory`, {
       credentials: 'same-origin',
       mode: 'cors',
@@ -77,17 +66,6 @@ const initData = async () => {
 
 const getData = async () => {
   try {
-    // const res = await fetch(
-    //   `http://192.168.1.12:5229/webapi/GetShipCountList?reso=1&start=${start.format(
-    //     'YYYY-MM-DD HH:mm:ss',
-    //   )}&end=${end.format('YYYY-MM-DD HH:mm:ss')}`,
-    //   { credentials: 'same-origin', mode: 'cors' },
-    // );
-    // const res = await fetch(
-    //   `http://192.168.1.12:5229/webapi/GetShipCountListNow?reso=0.01&start=${start.unix()}&end=${end.unix()}&lon1=121.04&lon2=128.63&lat1=31.98&lat2=27.74`,
-    //   { credentials: 'same-origin', mode: 'cors' },
-    // );
-    //
     const current = Date.now();
 
     const res = await fetch(
@@ -137,8 +115,8 @@ const getData = async () => {
         position: Cesium.Cartesian3.fromDegrees(Number(x), Number(y), 0),
         name: '模糊圆2',
         ellipse: {
-          semiMinorAxis: 8000.0,
-          semiMajorAxis: 8000.0,
+          semiMinorAxis: 4000.0,
+          semiMajorAxis: 4000.0,
           material: new CirclePulseMaterialProperty({
             color: Cesium.Color.fromCssColorString(getColor(count + count_new)),
             speed: 12.0,
@@ -167,7 +145,8 @@ const getData = async () => {
     <div class="header1">舟山海洋大数据 感知数据示意图</div>
     <div class="header2">
       <div class="header2-left">
-        <div class="city"></div>
+        <!-- <div class="city"></div> -->
+        <div class="world"></div>
       </div>
 
       <div class="day-count">
@@ -175,7 +154,10 @@ const getData = async () => {
       </div>
       <div class="data-count">
         <div class="data-count-title">数据统计</div>
-        <div class="data-count-num">{{ countNum }}</div>
+        <div class="data-count-num">
+          <div>{{ numberFormat(countNum).num }}</div>
+          <div class="data-count-uint">{{ numberFormat(countNum).uint }}</div>
+        </div>
       </div>
     </div>
     <div class="cssc-map" ref="refMap"></div>
@@ -230,6 +212,12 @@ div {
       height: 32px;
     }
 
+    .world {
+      background-image: url(./assets/imgs/4.png);
+      width: 335px;
+      height: 32px;
+    }
+
     .day-count {
       background-image: url(./assets/imgs/1.png);
       width: 280px;
@@ -279,12 +267,26 @@ div {
       }
 
       &-num {
+        display: flex;
         flex: 1;
+        align-items: baseline;
         font-size: 35px;
         text-align: right;
         letter-spacing: 0.44px;
         color: #ffffff;
         width: 210px;
+
+        > div {
+          text-align: right;
+          flex: 1;
+        }
+
+        .data-count-uint {
+          font-size: 14px;
+          padding-left: 4px;
+          flex: unset;
+          color: #999;
+        }
       }
     }
   }

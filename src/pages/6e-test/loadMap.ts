@@ -11,6 +11,7 @@ import './CircleBlurMaterialProperty';
 import CircleBlurMaterialProperty from './CircleBlurMaterialProperty';
 import CirclePulseMaterialProperty from './CirclePulseMaterialProperty';
 import dayjs from 'dayjs';
+import Zoom from './Zoom';
 
 Ion.defaultAccessToken = ION_TOKEN;
 
@@ -35,36 +36,39 @@ export default function (cesiumContainer: HTMLElement) {
   viewer.scene.screenSpaceCameraController.enableRotate = false;
   viewer.scene.screenSpaceCameraController.enableZoom = false;
   viewer.scene.screenSpaceCameraController.enableTilt = false;
-  viewer.scene.screenSpaceCameraController.enableTranslate = false;
+  // viewer.scene.screenSpaceCameraController.enableTranslate = false;
+
+  // const zoom = new Zoom(viewer);
+  // zoom.big(0.7);
 
   const layer = new Cesium.UrlTemplateImageryProvider({
     // url: `http://192.168.1.199:5201/timetilemap?tmbgn=${BGN_TIME}&tmend=${END_TIME}&x={x}&y={y}&z={z}`,
     // url: `http://192.168.1.199:5201/timetiledifference?tmbgn1=${BGN_TIME}&tmend1=${END_TIME}&tmbgn2=${BGN_TIME+10800}&tmend2=${END_TIME+10800}&x={x}&y={y}&z={z}`,
     url: `http://192.168.1.199:5201/timetilemap?tmbgn=${dayjs(
-      '2024-02-00 00:00:00',
-    ).unix()}&tmend=${dayjs('2024-02-07 00:00:00').unix()}&x={x}&y={y}&z={z}`,
+      '2024-02-01 00:00:00',
+    ).unix()}&tmend=${dayjs('2024-02-08 00:00:00').unix()}&x={x}&y={y}&z={z}`,
     minimumLevel: 2,
     maximumLevel: 9,
   });
 
   // 添加图层
-  var hotmaplayer = viewer.imageryLayers.addImageryProvider(layer);
+  // var hotmaplayer = viewer.imageryLayers.addImageryProvider(layer);
 
-  let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-  handler.setInputAction(function (event) {
-    let ray = viewer.camera.getPickRay(event.position);
-    let cartesian = viewer.scene.globe.pick(ray, viewer.scene);
-    let cartographic = Cesium.Cartographic.fromCartesian(cartesian);
-    let lng = Cesium.Math.toDegrees(cartographic.longitude); // 经度
-    let lat = Cesium.Math.toDegrees(cartographic.latitude); // 纬度
-    let alt = cartographic.height; // 高度
-    let coordinate = {
-      longitude: Number(lng.toFixed(6)),
-      latitude: Number(lat.toFixed(6)),
-      altitude: Number(alt.toFixed(2)),
-    };
-    console.log(coordinate);
-  }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+  // let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+  // handler.setInputAction(function (event) {
+  //   let ray = viewer.camera.getPickRay(event.position);
+  //   let cartesian = viewer.scene.globe.pick(ray, viewer.scene);
+  //   let cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+  //   let lng = Cesium.Math.toDegrees(cartographic.longitude); // 经度
+  //   let lat = Cesium.Math.toDegrees(cartographic.latitude); // 纬度
+  //   let alt = cartographic.height; // 高度
+  //   let coordinate = {
+  //     longitude: Number(lng.toFixed(6)),
+  //     latitude: Number(lat.toFixed(6)),
+  //     altitude: Number(alt.toFixed(2)),
+  //   };
+  //   console.log(coordinate);
+  // }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
   viewer.camera.flyTo({
     destination: Cesium.Cartesian3.fromDegrees(122.57, 30.21, 450000.0),
