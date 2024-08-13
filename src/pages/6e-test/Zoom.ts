@@ -18,7 +18,7 @@ export default class Zoom {
     var result = this.viewer.camera.pickEllipsoid(
       new Cesium.Cartesian2(
         this.viewer.canvas.clientWidth / 2,
-        this.viewer.canvas.clientHeight / 2 + 200,
+        this.viewer.canvas.clientHeight / 2 + 300,
       ),
     );
     var curPosition = Cesium.Ellipsoid.WGS84.cartesianToCartographic(result!);

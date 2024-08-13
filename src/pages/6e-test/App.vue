@@ -6,21 +6,24 @@ import dayjs from 'dayjs';
 import { getColor } from './utils';
 import CirclePulseMaterialProperty from './CirclePulseMaterialProperty';
 import numberFormat from './numberFormat';
+import qs from 'qs';
 
 const refMap = ref<HTMLElement>();
 let mapviewer: ReturnType<typeof loadMap>;
 let timeId;
 const dayCount = ref(346);
 const startDay = dayjs('2023-09-01');
-const countNum = ref(1000000);
+const countNum = ref(0);
 let start = dayjs('2024-08-09  20:28:00');
+const area = ref<'world' | 'zhoushan'>('zhoushan');
 
 const entities: Record<string, { entity: Cesium.Entity; count: number }> = {};
 
 onMounted(async () => {
-  mapviewer = loadMap(refMap.value!);
+  const query = qs.parse(window.location.search, { ignoreQueryPrefix: true });
+  area.value = query.area;
+  mapviewer = loadMap(refMap.value!, area.value);
   // await initData();
-  //
   await getData();
 });
 
@@ -69,9 +72,9 @@ const getData = async () => {
     const current = Date.now();
 
     const res = await fetch(
-      `http://192.168.1.12:5229/webapi/SetShipNow?start=${start.format(
+      `http://192.168.1.12:5229/webapi/GetShipListNow?start=${start.format(
         'YYYY-MM-DD HH:mm:ss',
-      )}`,
+      )}&area=${area.value}`,
       { credentials: 'same-origin', mode: 'cors' },
     );
 
@@ -79,15 +82,20 @@ const getData = async () => {
 
     dayCount.value = dayjs().diff(startDay, 'd');
 
-    const data: Array<{
-      x: string;
-      y: string;
-      count: number;
-      count_new: number;
-    }> = await res.json();
+    const data: {
+      sum_count: number;
+      data: Array<{
+        x: string;
+        y: string;
+        count: number;
+        count_new: number;
+      }>;
+    } = await res.json();
+
+    if (countNum.value === 0) countNum.value = data.sum_count;
 
     let index = 0;
-    for (let { x, y, count, count_new } of data) {
+    for (let { x, y, count, count_new } of data.data) {
       index++;
       countNum.value += count_new;
       const key = `${x}-${y}`;
@@ -115,8 +123,8 @@ const getData = async () => {
         position: Cesium.Cartesian3.fromDegrees(Number(x), Number(y), 0),
         name: '模糊圆2',
         ellipse: {
-          semiMinorAxis: 4000.0,
-          semiMajorAxis: 4000.0,
+          semiMinorAxis: area.value === 'world' ? 1004000.0 : 4000.0,
+          semiMajorAxis: area.value === 'world' ? 1004000.0 : 4000.0,
           material: new CirclePulseMaterialProperty({
             color: Cesium.Color.fromCssColorString(getColor(count + count_new)),
             speed: 12.0,
@@ -145,8 +153,8 @@ const getData = async () => {
     <div class="header1">舟山海洋大数据 感知数据示意图</div>
     <div class="header2">
       <div class="header2-left">
-        <!-- <div class="city"></div> -->
-        <div class="world"></div>
+        <div v-if="area === 'zhoushan'" class="city"></div>
+        <div v-else class="world"></div>
       </div>
 
       <div class="day-count">

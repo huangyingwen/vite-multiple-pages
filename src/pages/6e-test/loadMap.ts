@@ -15,7 +15,10 @@ import Zoom from './Zoom';
 
 Ion.defaultAccessToken = ION_TOKEN;
 
-export default function (cesiumContainer: HTMLElement) {
+export default function (
+  cesiumContainer: HTMLElement,
+  area: 'world' | 'zhoushan' = 'zhoushan',
+) {
   const viewer = new Viewer(cesiumContainer, {
     terrain: Terrain.fromWorldTerrain(),
     baseLayerPicker: false,
@@ -36,14 +39,15 @@ export default function (cesiumContainer: HTMLElement) {
   viewer.scene.screenSpaceCameraController.enableRotate = false;
   viewer.scene.screenSpaceCameraController.enableZoom = false;
   viewer.scene.screenSpaceCameraController.enableTilt = false;
-  // viewer.scene.screenSpaceCameraController.enableTranslate = false;
+  viewer.scene.screenSpaceCameraController.enableTranslate = false;
 
-  // const zoom = new Zoom(viewer);
-  // zoom.big(0.7);
+  if (area === 'world') {
+    // 不缩小地图显示不全
+    const zoom = new Zoom(viewer);
+    zoom.big(0.7);
+  }
 
   const layer = new Cesium.UrlTemplateImageryProvider({
-    // url: `http://192.168.1.199:5201/timetilemap?tmbgn=${BGN_TIME}&tmend=${END_TIME}&x={x}&y={y}&z={z}`,
-    // url: `http://192.168.1.199:5201/timetiledifference?tmbgn1=${BGN_TIME}&tmend1=${END_TIME}&tmbgn2=${BGN_TIME+10800}&tmend2=${END_TIME+10800}&x={x}&y={y}&z={z}`,
     url: `http://192.168.1.199:5201/timetilemap?tmbgn=${dayjs(
       '2024-02-01 00:00:00',
     ).unix()}&tmend=${dayjs('2024-02-08 00:00:00').unix()}&x={x}&y={y}&z={z}`,
@@ -52,7 +56,7 @@ export default function (cesiumContainer: HTMLElement) {
   });
 
   // 添加图层
-  // var hotmaplayer = viewer.imageryLayers.addImageryProvider(layer);
+  var hotmaplayer = viewer.imageryLayers.addImageryProvider(layer);
 
   // let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
   // handler.setInputAction(function (event) {
@@ -70,103 +74,20 @@ export default function (cesiumContainer: HTMLElement) {
   //   console.log(coordinate);
   // }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
-  viewer.camera.flyTo({
-    destination: Cesium.Cartesian3.fromDegrees(122.57, 30.21, 450000.0),
-    orientation: {
-      heading: Cesium.Math.toRadians(20.0),
-      pitch: Cesium.Math.toRadians(-35.0),
-      roll: 0.0,
-    },
-  });
-
-  viewer.cesiumWidget.creditContainer.style.display = 'none';
-
-  const start = Cesium.JulianDate.fromIso8601('2018-01-01T00:00:00.00Z');
-  const mid = Cesium.JulianDate.addSeconds(start, 2, new Cesium.JulianDate());
-  const stop = Cesium.JulianDate.addSeconds(start, 4, new Cesium.JulianDate());
-
-  const clock = viewer.clock;
-  clock.startTime = start;
-  clock.currentTime = start;
-  clock.stopTime = stop;
-  clock.clockRange = Cesium.ClockRange.LOOP_STOP;
-
-  var pulseProperty = new Cesium.SampledProperty(Number);
-  pulseProperty.setInterpolationOptions({
-    interpolationDegree: 3,
-    interpolationAlgorithm: Cesium.HermitePolynomialApproximation,
-  });
-
-  pulseProperty.addSample(start, 1.0);
-  pulseProperty.addSample(mid, 15.0);
-  pulseProperty.addSample(stop, 7.0);
-
-  let i = 0;
-  function addEntity() {
-    i += 0.1;
-    const entity = viewer.entities.add({
-      position: Cartesian3.fromDegrees(122.318 + i, 29.8132 + i, 0),
-      point: {
-        pixelSize: pulseProperty,
-        color: Cesium.Color.ORANGERED,
+  if (area === 'zhoushan') {
+    // 定位到舟山
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(122.57, 30.21, 450000.0),
+      orientation: {
+        heading: Cesium.Math.toRadians(20.0),
+        pitch: Cesium.Math.toRadians(-35.0),
+        roll: 0.0,
       },
     });
-
-    new Cesium.ColorMaterialProperty();
-
-    const stopFunc = () => {
-      entity.point!.pixelSize = new Cesium.ConstantProperty(7);
-
-      clock.onStop.removeEventListener(stopFunc);
-    };
-
-    clock.onStop.addEventListener(stopFunc);
-
-    setTimeout(addEntity, 1000 * 5);
   }
 
-  // addEntity();
-
-  // const kk = viewer.entities.add({
-  //   position: Cartesian3.fromDegrees(122.318, 29.8132, 0),
-  //   model: {
-  //     uri: pointGlb,
-  //     runAnimations: true,
-  //     scale: 1,
-  //   },
-  // });
-
-  // clock.onStop.addEventListener(() => {
-  //   viewer.entities.remove(kk);
-  // });
-
-  // viewer.trackedEntity = kk;
-  //
-
-  // const gif = [];
-  // loadGif(pointGif, gif);
-  // let k = 0;
-  // const bb = viewer.entities.add({
-  //   position: Cesium.Cartesian3.fromDegrees(100, 40),
-  //   billboard: {
-  //     verticalOrigin: Cesium.VerticalOrigin.BASELINE,
-  //     image: new Cesium.CallbackProperty(() => {
-  //       if (gif.length) {
-  //         if (k < gif.length - 1) {
-  //           k++;
-  //         } else {
-  //           k = 0;
-  //         }
-  //         return gif[k];
-  //       } else {
-  //         return pointGif; //因为loadGif是异步的，在解析完成之前先使用原图
-  //       }
-  //     }, false),
-  //     scale: 0.5,
-  //   },
-  // });
-  //
-  // viewer.trackedEntity = bb;
+  // 去掉 cesium log
+  viewer.cesiumWidget.creditContainer.remove();
 
   // let k = 0;
   // const colors = [
