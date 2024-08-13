@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="186px" height="23px" viewBox="0 0 186 23" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 16备份 2</title>
+    <defs>
+        <linearGradient x1="2.20969018%" y1="50%" x2="98.9410208%" y2="50%" id="linearGradient-1">
+            <stop stop-color="#98AFFF" offset="0%"></stop>
+            <stop stop-color="#279D36" offset="27.2910252%"></stop>
+            <stop stop-color="#64CB85" offset="41.3177029%"></stop>
+            <stop stop-color="#2EAB1C" offset="55.9486362%"></stop>
+            <stop stop-color="#D69F07" offset="68.2491776%"></stop>
+            <stop stop-color="#EA7B14" offset="80.8792328%"></stop>
+            <stop stop-color="#9B3A0E" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="编组-5" transform="translate(0.707967, 0.000000)">
+            <rect id="矩形" fill="url(#linearGradient-1)" x="36.4365449" y="0" width="148.855488" height="23" rx="11.5"></rect>
+            <text id="少" font-family="PingFangSC-Medium, PingFang SC" font-size="14" font-weight="400" letter-spacing="0.988235294" fill="#FFFFFF">
+                <tspan x="45.3935761" y="17">少</tspan>
+            </text>
+            <text id="流量" font-family="PingFangSC-Medium, PingFang SC" font-size="14" font-weight="400" letter-spacing="0.988235294" fill="#FFFFFF">
+                <tspan x="0" y="17">流量</tspan>
+            </text>
+            <text id="密集" font-family="PingFangSC-Medium, PingFang SC" font-size="14" font-weight="400" letter-spacing="0.988235294" fill="#FFFFFF">
+                <tspan x="143.642641" y="17">密集</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

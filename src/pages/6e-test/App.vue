@@ -7,6 +7,7 @@ import { getColor } from './utils';
 import CirclePulseMaterialProperty from './CirclePulseMaterialProperty';
 import numberFormat from './numberFormat';
 import qs from 'qs';
+import legendSvg from './assets/legend.svg';
 
 const refMap = ref<HTMLElement>();
 let mapviewer: Awaited<ReturnType<typeof loadMap>>;
@@ -184,6 +185,7 @@ const getData = async () => {
       </div>
     </div>
     <div class="cssc-map" ref="refMap"></div>
+    <div class="legend"><legendSvg /></div>
   </div>
 </template>
 
@@ -195,6 +197,13 @@ body,
   margin: 0 !important;
   width: 100%;
   height: 100%;
+  position: relative;
+}
+
+.legend {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
 }
 
 div {
