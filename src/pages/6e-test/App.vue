@@ -9,7 +9,7 @@ import numberFormat from './numberFormat';
 import qs from 'qs';
 
 const refMap = ref<HTMLElement>();
-let mapviewer: ReturnType<typeof loadMap>;
+let mapviewer: Awaited<ReturnType<typeof loadMap>>;
 let timeId;
 const dayCount = ref(346);
 const startDay = dayjs('2023-09-01');
@@ -22,7 +22,7 @@ const entities: Record<string, { entity: Cesium.Entity; count: number }> = {};
 onMounted(async () => {
   const query = qs.parse(window.location.search, { ignoreQueryPrefix: true });
   area.value = query.area;
-  mapviewer = loadMap(refMap.value!, area.value);
+  mapviewer = await loadMap(refMap.value!, area.value);
   // await initData();
   await getData();
 });
@@ -149,7 +149,22 @@ const getData = async () => {
 </script>
 
 <template>
-  <div class="main">
+  <div
+    class="main"
+    @click="
+      () => {
+        console.log(
+          mapviewer.camera,
+          mapviewer.camera.up,
+          mapviewer.camera.heading,
+          mapviewer.camera.pitch,
+          mapviewer.camera.roll,
+          mapviewer.camera.position,
+          mapviewer.camera.computeViewRectangle(),
+        );
+      }
+    "
+  >
     <div class="header1">舟山海洋大数据 感知数据示意图</div>
     <div class="header2">
       <div class="header2-left">

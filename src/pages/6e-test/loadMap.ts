@@ -15,12 +15,12 @@ import Zoom from './Zoom';
 
 Ion.defaultAccessToken = ION_TOKEN;
 
-export default function (
+export default async function (
   cesiumContainer: HTMLElement,
   area: 'world' | 'zhoushan' = 'zhoushan',
 ) {
   const viewer = new Viewer(cesiumContainer, {
-    terrain: Terrain.fromWorldTerrain(),
+    // terrain: Terrain.fromWorldTerrain(),
     baseLayerPicker: false,
     shouldAnimate: true,
     infoBox: false,
@@ -41,18 +41,57 @@ export default function (
   viewer.scene.screenSpaceCameraController.enableTilt = false;
   viewer.scene.screenSpaceCameraController.enableTranslate = false;
 
+  const gaodeImageryProvider = new Cesium.UrlTemplateImageryProvider({
+    url: 'https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
+    maximumLevel: 18,
+    minimumLevel: 0,
+    credit: 'Amap',
+  });
+  viewer.imageryLayers.addImageryProvider(gaodeImageryProvider);
+
+  viewer.imageryLayers.addImageryProvider(
+    new Cesium.UrlTemplateImageryProvider({
+      url: 'https://wprd01.is.autonavi.com/appmaptile?lang=zh_cn&size=1&style=8&ltype=4&x={x}&y={y}&z={z}',
+      maximumLevel: 18,
+      minimumLevel: 0,
+      credit: 'Amap',
+    }),
+  );
+
   if (area === 'world') {
     // 不缩小地图显示不全
     const zoom = new Zoom(viewer);
     zoom.big(0.7);
+    // viewer.camera.flyTo({
+    //   destination: new Cesium.Cartesian3(
+    //     11706425.717796028,
+    //     719884.5279264925,
+    //     12756274,
+    //   ),
+    //
+    //   orientation: {
+    //     direction: new Cesium.Cartesian3(-0, -0, -1),
+    //     right: new Cesium.Cartesian3(1, -3.341809674714232e-22, 0),
+    //     up: new Cesium.Cartesian3(3.341809674714232e-22, 1, 0),
+    //   },
+    // });
+    // viewer.camera.setView({
+    //   destination: Cesium.Cartesian3.fromDegrees(
+    //     116.39,
+    //     30.9,
+    //     viewer.camera.positionCartographic.height,
+    //   ),
+    // });
   }
 
   const layer = new Cesium.UrlTemplateImageryProvider({
-    url: `http://192.168.1.199:5201/timetilemap?tmbgn=${dayjs(
-      '2024-02-01 00:00:00',
-    ).unix()}&tmend=${dayjs('2024-02-08 00:00:00').unix()}&x={x}&y={y}&z={z}`,
+    url: `http://192.168.1.199:${
+      area === 'zhoushan' ? 5101 : 5201
+    }/timetilemap?tmbgn=${dayjs('2024-02-01 00:00:00').unix()}&tmend=${dayjs(
+      '2024-02-08 00:00:00',
+    ).unix()}&x={x}&y={y}&z={z}`,
     minimumLevel: 2,
-    maximumLevel: 9,
+    maximumLevel: area === 'zhoushan' ? 12 : 9,
   });
 
   // 添加图层
