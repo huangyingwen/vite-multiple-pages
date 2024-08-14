@@ -15,6 +15,7 @@
     "cesium": "^1.116.0",
     "dayjs": "^1.11.12",
     "gsap": "^3.12.5",
+    "leaflet": "^1.9.4",
     "libgif": "^0.0.3",
     "qs": "^6.13.0",
     "vue": "^3.4.36"
@@ -23,8 +24,10 @@
     "@commitlint/cli": "^17.8.1",
     "@commitlint/config-conventional": "^17.8.1",
     "@types/ejs": "^3.1.5",
+    "@types/leaflet": "^1.9.12",
     "@types/node": "^20.12.5",
     "@types/postcss-pxtorem": "^6.0.3",
+    "@types/qs": "^6.9.15",
     "@typescript-eslint/eslint-plugin": "~5.59.11",
     "@typescript-eslint/parser": "~5.59.11",
     "@vitejs/plugin-vue": "^5.1.2",

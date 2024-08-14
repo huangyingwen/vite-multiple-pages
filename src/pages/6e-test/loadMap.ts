@@ -12,6 +12,7 @@ import CircleBlurMaterialProperty from './CircleBlurMaterialProperty';
 import CirclePulseMaterialProperty from './CirclePulseMaterialProperty';
 import dayjs from 'dayjs';
 import Zoom from './Zoom';
+import borders from './borders.json';
 
 Ion.defaultAccessToken = ION_TOKEN;
 
@@ -132,6 +133,20 @@ export default async function (
   // }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
   if (area === 'zhoushan') {
+    borders.data.forEach(border => {
+      viewer.entities.add({
+        polyline: {
+          width: 1,
+          positions: border.points.map(a =>
+            Cesium.Cartesian3.fromDegrees(
+              Number(a.longitude),
+              Number(a.latitude),
+            ),
+          ),
+          material: Cesium.Color.fromCssColorString('rgb(62,130,225)'),
+        },
+      });
+    });
     // 定位到舟山
     viewer.camera.flyTo({
       destination: Cesium.Cartesian3.fromDegrees(122.57, 30.21, 450000.0),
