@@ -19,6 +19,12 @@ export default async function (
   cesiumContainer: HTMLElement,
   area: 'world' | 'zhoushan' = 'zhoushan',
 ) {
+  // Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
+  //   75.0, // 西经
+  //   0.0, // 南纬
+  //   140.0, // 东经
+  //   60.0, // 北纬
+  // );
   const viewer = new Viewer(cesiumContainer, {
     // terrain: Terrain.fromWorldTerrain(),
     baseLayerPicker: false,
@@ -36,10 +42,10 @@ export default async function (
 
   viewer.scene.mode = Cesium.SceneMode.SCENE2D;
 
-  viewer.scene.screenSpaceCameraController.enableRotate = false;
-  viewer.scene.screenSpaceCameraController.enableZoom = false;
-  viewer.scene.screenSpaceCameraController.enableTilt = false;
-  viewer.scene.screenSpaceCameraController.enableTranslate = false;
+  // viewer.scene.screenSpaceCameraController.enableRotate = false;
+  // viewer.scene.screenSpaceCameraController.enableZoom = false;
+  // viewer.scene.screenSpaceCameraController.enableTilt = false;
+  // viewer.scene.screenSpaceCameraController.enableTranslate = false;
 
   const gaodeImageryProvider = new Cesium.UrlTemplateImageryProvider({
     url: 'https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
@@ -60,8 +66,20 @@ export default async function (
 
   if (area === 'world') {
     // 不缩小地图显示不全
-    const zoom = new Zoom(viewer);
-    zoom.big(0.7);
+    // const zoom = new Zoom(viewer);
+    // zoom.big(0.7);
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(
+        98.43,
+        1.05,
+        viewer.camera.positionCartographic.height * 1.4,
+      ),
+      orientation: {
+        heading: Cesium.Math.toRadians(0),
+        pitch: Cesium.Math.toRadians(-90),
+        roll: 0,
+      },
+    });
     // viewer.camera.flyTo({
     //   destination: new Cesium.Cartesian3(
     //     11706425.717796028,
