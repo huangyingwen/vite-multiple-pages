@@ -78,13 +78,16 @@ const getData = async () => {
         // opacity: 1, //透明度
         fillColor: getColor(count + count_new), //填充色
         fillOpacity: 1, //填充透明度
-        radius: 0.5, //半径
+        radius: area.value === 'world' ? 1 : 0.5, //半径
       }).addTo(map.value!); //添加到this.yuangroup图层
 
       markers[key] = { marker: markerPoint, count: count + count_new };
 
       const pulsingIcon = L.icon.pulse({
-        iconSize: [5, 5],
+        iconSize: [
+          area.value === 'world' ? 10 : 5,
+          area.value === 'world' ? 10 : 5,
+        ],
         color: getColor(count + count_new),
         fillColor: getColor(count + count_new),
       });
@@ -96,8 +99,8 @@ const getData = async () => {
         markerPulse.remove();
       }, 1000 * 3);
 
-      if (index % 100 === 0) {
-        await new Promise(resolve => setTimeout(() => resolve(0), 1000 * 6));
+      if (index % (area.value === 'world' ? 200 : 100) === 0) {
+        await new Promise(resolve => setTimeout(() => resolve(0), 1000 * 3));
       }
     }
   } catch (e) {

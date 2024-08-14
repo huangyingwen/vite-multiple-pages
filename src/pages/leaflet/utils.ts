@@ -40,7 +40,7 @@ export function getColors() {
   for (let i = 0; i < 6; i++) {
     for (let j = 0; j <= 256; j += 4) {
       if (i === 0 && j >= 128) {
-        colors.push(rgbToHex(0, 0, j > 255 ? 255 : j));
+        // colors.push(rgbToHex(0, 0, j > 255 ? 255 : j));
       } else if (i === 1 && j > 2 && j <= 252) {
         colors.push(rgbToHex(0, j > 255 ? 255 : j, 255));
       } else if (i === 2 && j >= 2 && j < 254) {
@@ -50,7 +50,7 @@ export function getColors() {
       } else if (i === 3 && j > 0) {
         colors.push(rgbToHex(255, 256 - j, 0));
       } else if (i === 4 && j > 0 && j <= 128) {
-        colors.push(rgbToHex(256 - j, 0, 0));
+        // colors.push(rgbToHex(256 - j, 0, 0));
       }
     }
   }
@@ -62,7 +62,7 @@ const colors = getColors();
 
 export function getColor(count: number) {
   return colors[
-    Math.floor(Math.min(254, (254 * Math.log(count)) / Math.log(65536)))
+    Math.floor(Math.min(189, (189 * Math.log(count)) / Math.log(65536)))
   ];
 
   if (count < 20) {
