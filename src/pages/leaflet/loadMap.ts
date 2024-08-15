@@ -10,16 +10,16 @@ export default function loadMap(
     center: [30.21, 122.8],
     minZoom: 1,
     maxZoom: 30,
-    zoom: area === 'zhoushan' ? 9 : 2,
+    zoom: area === 'zhoushan' ? 10 : 3,
     zoomControl: false,
     doubleClickZoom: false,
   });
 
-  // map.scrollWheelZoom.disable();
-  // map.dragging.disable();
-  // map.doubleClickZoom.disable();
+  map.scrollWheelZoom.disable();
+  map.dragging.disable();
+  map.doubleClickZoom.disable();
 
-  //控制地图底图
+  // 控制地图底图
   const baseLayers = [
     L.tileLayer(
       'http://webst0{s}.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',

@@ -61,7 +61,7 @@ const getData = async () => {
     if (countNum.value === 0) countNum.value = data.sum_count;
 
     let index = 0;
-    for (let { x, y, count, count_new } of data.data) {
+    for (const { x, y, count, count_new } of data.data) {
       index++;
       countNum.value += count_new;
       const key = `${x}-${y}`;
@@ -73,13 +73,13 @@ const getData = async () => {
       }
 
       const markerPoint = L.circleMarker([Number(y), Number(x)], {
-        color: '#000', //线颜色
-        weight: 0, //线宽度
+        color: '#000', // 线颜色
+        weight: 0, // 线宽度
         // opacity: 1, //透明度
-        fillColor: getColor(count + count_new), //填充色
-        fillOpacity: 1, //填充透明度
-        radius: area.value === 'world' ? 1 : 0.5, //半径
-      }).addTo(map.value!); //添加到this.yuangroup图层
+        fillColor: getColor(count + count_new), // 填充色
+        fillOpacity: 1, // 填充透明度
+        radius: area.value === 'world' ? 1 : 0.5, // 半径
+      }).addTo(map.value!); // 添加到this.yuangroup图层
 
       markers[key] = { marker: markerPoint, count: count + count_new };
 
@@ -131,7 +131,7 @@ const getData = async () => {
         </div>
       </div>
     </div>
-    <div class="cssc-map" ref="refMap"></div>
+    <div ref="refMap" class="cssc-map"></div>
     <div class="legend"><legendSvg /></div>
   </div>
 </template>
@@ -230,7 +230,7 @@ div {
 
     .data-count {
       margin-left: 18px;
-      width: 281px;
+      width: 349px;
       height: 58px;
       background-image: url(./assets/imgs/5.svg);
       background-repeat: no-repeat;
