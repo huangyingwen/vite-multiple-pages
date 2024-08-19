@@ -78,29 +78,28 @@ const getData = async () => {
         // opacity: 1, //透明度
         fillColor: getColor(count + count_new), // 填充色
         fillOpacity: 1, // 填充透明度
-        radius: area.value === 'world' ? 1 : 0.5, // 半径
+        radius: 1, // 半径
       }).addTo(map.value!); // 添加到this.yuangroup图层
 
       markers[key] = { marker: markerPoint, count: count + count_new };
 
       const pulsingIcon = L.icon.pulse({
-        iconSize: [
-          area.value === 'world' ? 10 : 5,
-          area.value === 'world' ? 10 : 5,
-        ],
+        iconSize: [10, 10],
         color: getColor(count + count_new),
         fillColor: getColor(count + count_new),
       });
-      const markerPulse = L.marker([Number(y), Number(x)], {
-        icon: pulsingIcon,
-      }).addTo(map.value!);
-
       setTimeout(() => {
-        markerPulse.remove();
-      }, 1000 * 3);
+        const markerPulse = L.marker([Number(y), Number(x)], {
+          icon: pulsingIcon,
+        }).addTo(map.value!);
 
-      if (index % (area.value === 'world' ? 200 : 100) === 0) {
-        await new Promise(resolve => setTimeout(() => resolve(0), 1000 * 3));
+        setTimeout(() => {
+          markerPulse.remove();
+        }, 1000 * 3);
+      }, 200);
+
+      if (index % (area.value === 'world' ? 200 : 200) === 0) {
+        await new Promise(resolve => setTimeout(() => resolve(0), 250));
       }
     }
   } catch (e) {
@@ -109,15 +108,23 @@ const getData = async () => {
 
   timeId = setTimeout(getData, 1000);
 };
+
+const handleClick = _area => {
+  window.location.href = `/leaflet?area=${_area}`;
+};
 </script>
 
 <template>
   <div class="main">
-    <div class="header1">舟山海洋大数据 感知数据示意图</div>
+    <div class="header1">舟山海洋大数据 感知数据态势图</div>
     <div class="header2">
       <div class="header2-left">
-        <div v-if="area === 'zhoushan'" class="city"></div>
-        <div v-else class="world"></div>
+        <div
+          v-if="area === 'zhoushan'"
+          class="city"
+          @click="handleClick('world')"
+        ></div>
+        <div v-else class="world" @click="handleClick('zhoushan')"></div>
       </div>
 
       <div class="day-count">
@@ -196,6 +203,11 @@ div {
       background-image: url(./assets/imgs/4.png);
       width: 335px;
       height: 32px;
+    }
+
+    .city,
+    .world {
+      cursor: pointer;
     }
 
     .day-count {

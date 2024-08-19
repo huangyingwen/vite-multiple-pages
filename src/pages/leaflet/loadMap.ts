@@ -13,11 +13,12 @@ export default function loadMap(
     zoom: area === 'zhoushan' ? 10 : 3,
     zoomControl: false,
     doubleClickZoom: false,
+    attributionControl: false,
   });
 
-  map.scrollWheelZoom.disable();
-  map.dragging.disable();
-  map.doubleClickZoom.disable();
+  // map.scrollWheelZoom.disable();
+  // map.dragging.disable();
+  // map.doubleClickZoom.disable();
 
   // 控制地图底图
   const baseLayers = [
