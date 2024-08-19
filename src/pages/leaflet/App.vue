@@ -109,7 +109,7 @@ const getData = async () => {
   timeId = setTimeout(getData, 1000);
 };
 
-const handleClick = _area => {
+const handleClick = (_area: string) => {
   window.location.href = `/leaflet?area=${_area}`;
 };
 </script>
@@ -194,20 +194,19 @@ div {
     }
 
     .city {
-      background-image: url(./assets/imgs/2.png);
-      width: 335px;
+      background-image: url(./assets/imgs/2.svg);
       height: 32px;
     }
 
     .world {
-      background-image: url(./assets/imgs/4.png);
-      width: 335px;
+      background-image: url(./assets/imgs/4.svg);
       height: 32px;
     }
 
     .city,
     .world {
       cursor: pointer;
+      width: 300px;
     }
 
     .day-count {
