@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "prepare": "husky install",
-    "lint": "lint-staged"
+    "lint": "lint-staged --no-stash"
   },
   "dependencies": {
     "@babylonjs/core": "^7.1.0",
@@ -16,6 +16,7 @@
     "dayjs": "^1.11.12",
     "gsap": "^3.12.5",
     "leaflet": "^1.9.4",
+    "leaflet.chinatmsproviders": "^3.0.6",
     "libgif": "^0.0.3",
     "qs": "^6.13.0",
     "vue": "^3.4.36"

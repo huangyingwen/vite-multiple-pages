@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="51px" height="22px" viewBox="0 0 51 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>热力图选中备份 2</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#9BD9EF" offset="0%"></stop>
+            <stop stop-color="#05313C" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="50%" x2="100%" y2="50%" id="linearGradient-2">
+            <stop stop-color="#D2F6FF" offset="0%"></stop>
+            <stop stop-color="#CAF3FF" stop-opacity="0" offset="51.6104745%"></stop>
+            <stop stop-color="#5BC7E7" stop-opacity="0" offset="58.6994305%"></stop>
+            <stop stop-color="#A6E9FE" offset="100%"></stop>
+        </linearGradient>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-3">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-4">
+            <stop stop-color="#C5FFFC" offset="0%"></stop>
+            <stop stop-color="#6AFFFB" offset="99.6913243%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="热力图选中备份-2">
+            <rect id="矩形备份-28" stroke="url(#linearGradient-2)" fill="url(#linearGradient-1)" filter="url(#filter-3)" x="0.5" y="0.5" width="50" height="21" rx="10.5"></rect>
+            <text id="轮播" fill="url(#linearGradient-4)" fill-rule="nonzero" font-family="STXihei, STHeiti" font-size="12" font-weight="300">
+                <tspan x="14" y="15">轮播</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="51px" height="22px" viewBox="0 0 51 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>热力图选中备份 4</title>
+    <defs>
+        <linearGradient x1="0%" y1="50%" x2="100%" y2="50%" id="linearGradient-1">
+            <stop stop-color="#D2F6FF" offset="0%"></stop>
+            <stop stop-color="#CAF3FF" stop-opacity="0" offset="51.6104745%"></stop>
+            <stop stop-color="#5BC7E7" stop-opacity="0" offset="58.6994305%"></stop>
+            <stop stop-color="#A6E9FE" offset="100%"></stop>
+        </linearGradient>
+        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-2">
+            <feGaussianBlur stdDeviation="0" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="热力图选中备份-4">
+            <rect id="矩形备份-28" stroke="url(#linearGradient-1)" fill="#082039" filter="url(#filter-2)" x="0.5" y="0.5" width="50" height="21" rx="10.5"></rect>
+            <text id="轮播" font-family="STXihei, STHeiti" font-size="12" font-weight="300" fill="#466D7E">
+                <tspan x="14" y="15">轮播</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

@@ -8,12 +8,14 @@ import 'leaflet/dist/leaflet.css';
 import * as L from 'leaflet';
 import './L.Icon.Pulse.css';
 import './L.Icon.Pulse.js';
-import loadMap from './loadMap.js';
+import loadMap, { addHotMapLayer, addMapCarousel } from './loadMap.js';
 import { getColor } from './utils.js';
 
 const refMap = ref<HTMLElement>();
 const map = ref<L.Map>();
 const area = ref<'world' | 'zhoushan'>('zhoushan');
+const hotmap = ref(false);
+const carousel = ref(false);
 const dayCount = ref(346);
 const countNum = ref(0);
 const startDay = dayjs('2023-09-01');
@@ -21,6 +23,8 @@ let start = dayjs('2024-08-09  20:28:00');
 let timeId: any;
 
 const markers: Record<string, { marker: L.CircleMarker; count: number }> = {};
+const addHotmap = addHotMapLayer();
+const addCarousel = addMapCarousel();
 
 onMounted(async () => {
   const query = qs.parse(window.location.search, { ignoreQueryPrefix: true });
@@ -38,7 +42,7 @@ const getData = async () => {
     const current = Date.now();
 
     const res = await fetch(
-      `http://192.168.1.12:5229/webapi/GetShipListNow?start=${start.format(
+      `http://192.168.1.218:5229/webapi/GetShipListNow?start=${start.format(
         'YYYY-MM-DD HH:mm:ss',
       )}&area=${area.value}`,
       { credentials: 'same-origin', mode: 'cors' },
@@ -69,19 +73,18 @@ const getData = async () => {
         markers[key].count = count + count_new;
         markers[key].marker.setLatLng([Number(y), Number(x)]);
         markers[key].marker.setStyle({ color: getColor(count + count_new) });
-        continue;
+      } else {
+        const markerPoint = L.circleMarker([Number(y), Number(x)], {
+          color: '#000', // 线颜色
+          weight: 0, // 线宽度
+          // opacity: 1, //透明度
+          fillColor: getColor(count + count_new), // 填充色
+          fillOpacity: 1, // 填充透明度
+          radius: 1, // 半径
+        }).addTo(map.value!); // 添加到this.yuangroup图层
+
+        markers[key] = { marker: markerPoint, count: count + count_new };
       }
-
-      const markerPoint = L.circleMarker([Number(y), Number(x)], {
-        color: '#000', // 线颜色
-        weight: 0, // 线宽度
-        // opacity: 1, //透明度
-        fillColor: getColor(count + count_new), // 填充色
-        fillOpacity: 1, // 填充透明度
-        radius: 1, // 半径
-      }).addTo(map.value!); // 添加到this.yuangroup图层
-
-      markers[key] = { marker: markerPoint, count: count + count_new };
 
       const pulsingIcon = L.icon.pulse({
         iconSize: [10, 10],
@@ -106,17 +109,41 @@ const getData = async () => {
     console.log(e);
   }
 
-  timeId = setTimeout(getData, 1000);
+  timeId = setTimeout(getData, 3000);
 };
 
 const handleClick = (_area: string) => {
   window.location.href = `/leaflet?area=${_area}`;
 };
+
+const handleHotmap = () => {
+  hotmap.value = !hotmap.value;
+  addHotmap(map.value!, area.value);
+};
+
+const handleCarousel = () => {
+  carousel.value = !carousel.value;
+  addCarousel(map.value!, area.value);
+};
 </script>
 
 <template>
   <div class="main">
-    <div class="header1">舟山海洋大数据 感知数据态势图</div>
+    <div class="header1">
+      <div class="header1-title">舟山海洋大数据 感知数据态势图</div>
+      <div class="header1-btns">
+        <button
+          class="hotmap"
+          :class="hotmap ? 'selected' : ''"
+          @click="handleHotmap()"
+        ></button>
+        <button
+          class="carousel"
+          :class="carousel ? 'selected' : ''"
+          @click="handleCarousel()"
+        ></button>
+      </div>
+    </div>
     <div class="header2">
       <div class="header2-left">
         <div
@@ -131,7 +158,6 @@ const handleClick = (_area: string) => {
         <div class="day-count-wrap">{{ dayCount }}</div>
       </div>
       <div class="data-count">
-        <div class="data-count-title">数据统计</div>
         <div class="data-count-num">
           <div>{{ numberFormat(countNum).num }}</div>
           <div class="data-count-uint">{{ numberFormat(countNum).uint }}</div>
@@ -148,10 +174,10 @@ html,
 body,
 .rootcon,
 .main {
-  margin: 0 !important;
+  position: relative;
   width: 100%;
   height: 100%;
-  position: relative;
+  margin: 0 !important;
 }
 
 .legend {
@@ -168,114 +194,141 @@ div {
 .main {
   display: flex;
   flex-direction: column;
-  background-image: url(./assets/imgs/bg.jpg);
+  background-image: url("./assets/imgs/bg.jpg");
 
   .header1 {
+    display: flex;
     height: 68px;
-    background-image: url(./assets/imgs/3.svg);
+    padding-top: 18px;
+    padding-left: 28px;
     font-size: 28px;
     font-weight: normal;
     line-height: normal;
-    text-align: left;
-    letter-spacing: 0px;
     color: #4ce0ff;
-    padding-top: 18px;
-    padding-left: 28px;
+    text-align: left;
+    letter-spacing: 0;
+    background-image: url("./assets/imgs/3.svg");
+
+    .header1-title {
+      flex: 1;
+    }
+
+    .header1-btns {
+      padding: 18px 8px 0 0;
+
+      > button {
+        width: 51px;
+        height: 22px;
+        padding: 0;
+        margin: 0;
+        background-color: transparent;
+        background-size: cover;
+        border: none;
+        outline: none;
+      }
+
+      .hotmap {
+        margin-right: 8px;
+        background-image: url("./assets/imgs/hotmap.svg");
+
+        &:hover,
+        &.selected {
+          background-image: url("./assets/imgs/hotmap-selected.svg");
+        }
+      }
+
+      .carousel {
+        background-image: url("./assets/imgs/carousel.svg");
+
+        &:hover,
+        &.selected {
+          background-image: url("./assets/imgs/carousel-selected.svg");
+        }
+      }
+    }
   }
 
   .header2 {
     display: flex;
+    align-items: center;
     height: 60px;
     padding: 16px 8px;
-    align-items: center;
 
     &-left {
       flex: 1;
     }
 
     .city {
-      background-image: url(./assets/imgs/2.svg);
-      height: 32px;
+      background-image: url("./assets/imgs/2.svg");
     }
 
     .world {
-      background-image: url(./assets/imgs/4.svg);
-      height: 32px;
+      background-image: url("./assets/imgs/4.svg");
     }
 
     .city,
     .world {
+      width: 103px;
+      height: 34px;
       cursor: pointer;
-      width: 300px;
     }
 
     .day-count {
-      background-image: url(./assets/imgs/1.png);
-      width: 280px;
-      height: 58px;
-
       position: relative;
       top: 0;
       left: 0;
-
-      color: #4ce0ff;
+      width: 218px;
+      height: 35px;
       font-size: 22px;
+      color: #4ce0ff;
+      background-image: url("./assets/imgs/1.svg");
 
       .day-count-wrap {
         position: absolute;
-        top: 15px;
-        right: 22px;
+        top: 3px;
+        right: 17px;
         display: flex;
-        // width: 120px;
-        letter-spacing: 14px;
         padding-left: 5px;
         text-align: right;
+        letter-spacing: 10px;
 
         div {
-          text-align: center;
           width: 22px;
           margin-right: 5px;
+          text-align: center;
         }
       }
     }
 
     .data-count {
-      margin-left: 18px;
-      width: 349px;
-      height: 58px;
-      background-image: url(./assets/imgs/5.svg);
-      background-repeat: no-repeat;
       display: flex;
       align-items: center;
+      width: 282px;
+      height: 35px;
       padding: 0 9px 0 20px;
-
-      &-title {
-        font-size: 17px;
-        font-weight: normal;
-        line-height: normal;
-        letter-spacing: 0.71px;
-        color: #ffffff;
-      }
+      margin-left: 18px;
+      background-image: url("./assets/imgs/5.svg");
+      background-repeat: no-repeat;
 
       &-num {
         display: flex;
         flex: 1;
         align-items: baseline;
-        font-size: 35px;
+        width: 210px;
+        font-size: 24px;
+        color: #fff;
         text-align: right;
         letter-spacing: 0.44px;
-        color: #ffffff;
-        width: 210px;
 
         > div {
-          text-align: right;
           flex: 1;
+          text-align: right;
         }
 
         .data-count-uint {
-          font-size: 14px;
-          padding-left: 4px;
           flex: unset;
+          padding-left: 4px;
+          font-size: 14px;
           color: #999;
         }
       }

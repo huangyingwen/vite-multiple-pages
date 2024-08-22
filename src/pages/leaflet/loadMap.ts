@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import * as L from 'leaflet';
+import 'leaflet.chinatmsproviders';
 import borders from './borders.json';
 
 export default function loadMap(
@@ -20,32 +21,17 @@ export default function loadMap(
   // map.dragging.disable();
   // map.doubleClickZoom.disable();
 
-  // 控制地图底图
-  const baseLayers = [
-    L.tileLayer(
-      'http://webst0{s}.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
-      { subdomains: '1234' },
-    ),
-    L.tileLayer(
-      'http://webst0{s}.is.autonavi.com/appmaptile?x={x}&y={y}&z={z}&lang=zh_cn&size=1&scale=1&style=8',
-      { subdomains: '1234' },
-    ),
-    L.tileLayer(
-      'http://117.173.87.250:9000/api/Map/Tile?name=TongboHaitu&type=Normal&x={x}&y={y}&z={z}',
-    ),
-  ];
+  L.tileLayer
+    .chinaProvider('TianDiTu.Terrain.Map', {
+      key: '9829017c7b20927b26a45802b58fd1df',
+    })
+    .addTo(map);
 
-  baseLayers[0].addTo(map);
-  baseLayers[1].addTo(map);
-  // baseLayers[2].addTo(map);
-
-  L.tileLayer(
-    `http://192.168.1.199:${
-      area === 'zhoushan' ? 5101 : 5201
-    }/timetilemap?tmbgn=${dayjs('2024-02-01 00:00:00').unix()}&tmend=${dayjs(
-      '2024-02-08 00:00:00',
-    ).unix()}&x={x}&y={y}&z={z}`,
-  ).addTo(map);
+  L.tileLayer
+    .chinaProvider('TianDiTu.Terrain.Annotion', {
+      key: '9829017c7b20927b26a45802b58fd1df',
+    })
+    .addTo(map);
 
   if (area === 'zhoushan') {
     borders.data.forEach(border => {
@@ -60,4 +46,68 @@ export default function loadMap(
   }
 
   return map;
+}
+
+export function addHotMapLayer() {
+  let layer: L.Layer | undefined;
+  return (map: L.Map, area: 'zhoushan' | 'world') => {
+    if (layer) {
+      layer.remove();
+      layer = undefined;
+      return;
+    }
+
+    layer = L.tileLayer(
+      `http://192.168.1.199:5801/tileMap/${
+        area === 'zhoushan' ? 'aisZhoushan' : 'aisWorld'
+      }/summonth?x={x}&y={y}&z={z}&months=1`,
+    ).addTo(map);
+  };
+}
+
+export function addMapCarousel() {
+  let timeId: number | undefined;
+  let months = 1;
+  const picks = 1;
+  let hotmaplayer: L.Layer | undefined;
+
+  return (map: L.Map, area: 'zhoushan' | 'world') => {
+    function getHeatmap() {
+      const flag2 = 'summonth';
+      let url = '';
+
+      if (flag2 === 'summonth') {
+        url = `x={x}&y={y}&z={z}&months=${months}`;
+      } else if (flag2 === 'picktime') {
+        url = `x={x}&y={y}&z={z}&picks=${picks}`;
+      }
+
+      return L.tileLayer(
+        `http://192.168.1.199:5801/tileMap/${
+          area === 'zhoushan' ? 'aisZhoushan' : 'aisWorld'
+        }/${flag2}?${url}`,
+      ).addTo(map);
+    }
+
+    function setIntervalCallback() {
+      if (hotmaplayer) hotmaplayer.remove();
+      hotmaplayer = getHeatmap();
+      months++;
+      if (months > 11) {
+        months = 1;
+      }
+    }
+
+    if (timeId || hotmaplayer) {
+      clearInterval(timeId);
+      hotmaplayer?.remove();
+      hotmaplayer = undefined;
+      timeId = undefined;
+      return;
+    }
+
+    months = 1;
+    timeId = setInterval(setIntervalCallback, 1000 * 10) as unknown as number;
+    setIntervalCallback();
+  };
 }
