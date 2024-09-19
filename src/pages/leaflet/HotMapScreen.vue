@@ -8,6 +8,7 @@ import 'leaflet/dist/leaflet.css';
 import * as L from 'leaflet';
 import './L.Icon.Pulse.css';
 import './L.Icon.Pulse.js';
+import './leaflet.canvas-markers.js';
 import loadMap, { addHotMapLayer, addMapCarousel } from './loadMap.js';
 import { getColor } from './utils.js';
 
@@ -23,8 +24,10 @@ let start = dayjs('2024-08-09  20:28:00');
 let timeId: any;
 
 const markers: Record<string, { marker: L.CircleMarker; count: number }> = {};
+const markerPulses: Record<number, L.Marker> = {};
 const addHotmap = addHotMapLayer();
 const addCarousel = addMapCarousel();
+const myRenderer = L.canvas({ padding: 0.5 });
 
 onMounted(async () => {
   const query = qs.parse(window.location.search, { ignoreQueryPrefix: true });
@@ -71,7 +74,6 @@ const getData = async () => {
       const key = `${x}-${y}`;
       if (markers[key]) {
         markers[key].count = count + count_new;
-        markers[key].marker.setLatLng([Number(y), Number(x)]);
         markers[key].marker.setStyle({ color: getColor(count + count_new) });
       } else {
         const markerPoint = L.circleMarker([Number(y), Number(x)], {
@@ -81,6 +83,7 @@ const getData = async () => {
           fillColor: getColor(count + count_new), // 填充色
           fillOpacity: 1, // 填充透明度
           radius: 1, // 半径
+          renderer: myRenderer,
         }).addTo(map.value!); // 添加到this.yuangroup图层
 
         markers[key] = { marker: markerPoint, count: count + count_new };
@@ -91,19 +94,19 @@ const getData = async () => {
         color: getColor(count + count_new),
         fillColor: getColor(count + count_new),
       });
-      setTimeout(() => {
-        const markerPulse = L.marker([Number(y), Number(x)], {
+
+      const markerPulseKey = index % 200;
+      if (!markerPulses[markerPulseKey]) {
+        markerPulses[markerPulseKey] = L.marker([Number(y), Number(x)], {
           icon: pulsingIcon,
         }).addTo(map.value!);
-
-        setTimeout(() => {
-          markerPulse.remove();
-        }, 1000 * 3);
-      }, 200);
-
-      if (index % (area.value === 'world' ? 200 : 200) === 0) {
-        await new Promise(resolve => setTimeout(() => resolve(0), 250));
+      } else {
+        markerPulses[markerPulseKey]
+          .setLatLng([Number(y), Number(x)])
+          .setIcon(pulsingIcon);
       }
+
+      await new Promise(resolve => setTimeout(resolve, 100));
     }
   } catch (e) {
     console.log(e);
