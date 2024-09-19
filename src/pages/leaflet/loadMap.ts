@@ -8,10 +8,10 @@ export default function loadMap(
   area: 'world' | 'zhoushan' = 'zhoushan',
 ) {
   const map = L.map(mapCon, {
-    center: [30.21, 122.8],
+    center: [30, 122.6],
     minZoom: 1,
     maxZoom: 30,
-    zoom: area === 'zhoushan' ? 10 : 3,
+    zoom: area === 'zhoushan' ? 9 : 3,
     zoomControl: false,
     doubleClickZoom: false,
     attributionControl: false,
