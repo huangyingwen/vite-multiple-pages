@@ -28,17 +28,30 @@ const markerPulses: Record<number, L.Marker> = {};
 const addHotmap = addHotMapLayer();
 const addCarousel = addMapCarousel();
 const myRenderer = L.canvas({ padding: 0.5 });
+const date = ref({ d: 0, h: 0, m: 0, s: 0 });
 
 onMounted(async () => {
   const query = qs.parse(window.location.search, { ignoreQueryPrefix: true });
   area.value = (query.area || 'zhoushan') as any;
   // await initData();
   // await getData();
-  //
+  statisticalTime();
+
   map.value = loadMap(refMap.value!, area.value);
 
   getData();
 });
+
+function statisticalTime() {
+  const date1 = dayjs('2019-03-09');
+  const second = dayjs().diff(date1, 's');
+  date.value.d = Math.floor(second / 60 / 60 / 24);
+  date.value.h = Math.floor((second / 60 / 60) % 24);
+  date.value.m = Math.floor((second / 60) % 60);
+  date.value.s = Math.floor(second % 60);
+
+  setTimeout(statisticalTime, 1000);
+}
 
 const getData = async () => {
   try {
@@ -156,12 +169,13 @@ const handleCarousel = () => {
       </div>
 
       <div class="day-count">
-        <div class="day-count-wrap">{{ dayCount }}</div>
+        <div class="day-count-wrap">
+          {{ date.d }}天{{ date.h }}时{{ date.m }}分{{ date.s }}秒
+        </div>
       </div>
       <div class="data-count">
         <div class="data-count-num">
-          <div>{{ numberFormat(countNum).num }}</div>
-          <div class="data-count-uint">{{ numberFormat(countNum).uint }}</div>
+          <div>{{ countNum }}</div>
         </div>
       </div>
     </div>
@@ -251,37 +265,22 @@ div {
     }
 
     .day-count {
-      position: relative;
-      top: 0;
-      left: 0;
-      width: 218px;
-      height: 35px;
-      font-size: 22px;
-      color: #4ce0ff;
+      display: flex;
+      align-items: center;
+      justify-content: right;
+      width: 198px;
+      height: 44px;
+      padding-right: 8px;
+      font-size: 14px;
+      color: #fff;
       background-image: url('./assets/imgs/1.svg');
-
-      .day-count-wrap {
-        position: absolute;
-        top: 3px;
-        right: 17px;
-        display: flex;
-        padding-left: 5px;
-        text-align: right;
-        letter-spacing: 10px;
-
-        div {
-          width: 22px;
-          margin-right: 5px;
-          text-align: center;
-        }
-      }
     }
 
     .data-count {
       display: flex;
       align-items: center;
-      width: 282px;
-      height: 35px;
+      width: 358px;
+      height: 44px;
       padding: 0 9px 0 20px;
       margin-left: 18px;
       background-image: url('./assets/imgs/5.svg');
