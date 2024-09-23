@@ -43,7 +43,7 @@ onMounted(async () => {
 });
 
 function statisticalTime() {
-  const date1 = dayjs('2019-03-09');
+  const date1 = dayjs('2022-09-01');
   const second = dayjs().diff(date1, 's');
   date.value.d = Math.floor(second / 60 / 60 / 24);
   date.value.h = Math.floor((second / 60 / 60) % 24);
