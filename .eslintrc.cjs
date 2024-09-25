@@ -23,6 +23,7 @@ module.exports = {
     'vue/multi-word-component-names': 0,
     'no-control-regex': 0,
     'vue/html-indent': 'error',
+    camelcase: 0,
   },
   globals: { defineOptions: 'writable' },
 };

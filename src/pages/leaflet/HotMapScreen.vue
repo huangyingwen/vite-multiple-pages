@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import numberFormat from './numberFormat';
 import qs from 'qs';
 import legendSvg from './assets/legend.svg';
 import dayjs from 'dayjs';
+import DataAggOverview from './DataAggOverview/index.vue';
 import 'leaflet/dist/leaflet.css';
 import * as L from 'leaflet';
 import './L.Icon.Pulse.css';
 import './L.Icon.Pulse.js';
-import './leaflet.canvas-markers.js';
 import loadMap, { addHotMapLayer, addMapCarousel } from './loadMap.js';
 import { getColor } from './utils.js';
 
@@ -21,7 +20,6 @@ const dayCount = ref(346);
 const countNum = ref(0);
 const startDay = dayjs('2023-09-01');
 let start = dayjs('2024-08-09  20:28:00');
-let timeId: any;
 
 const markers: Record<string, { marker: L.CircleMarker; count: number }> = {};
 const markerPulses: Record<number, L.Marker> = {};
@@ -125,7 +123,7 @@ const getData = async () => {
     console.log(e);
   }
 
-  timeId = setTimeout(getData, 3000);
+  setTimeout(getData, 3000);
 };
 
 const handleClick = (_area: string) => {
@@ -181,6 +179,23 @@ const handleCarousel = () => {
     </div>
     <div ref="refMap" class="cssc-map"></div>
     <div class="legend"><legendSvg /></div>
+    <DataAggOverview>
+      <template #default="slotProps">
+        <div class="menu-btns">
+          <div class="nav">
+            <div class="menu-item">态势上图</div>
+            <div class="sub-menu">
+              <div>AIS目标</div>
+              <div>雷达目标</div>
+              <div>低空目标</div>
+              <div>示位仪目标</div>
+              <div>卫星遥感</div>
+            </div>
+          </div>
+          <button @click="slotProps.handleShow">数据汇聚概览</button>
+        </div>
+      </template>
+    </DataAggOverview>
   </div>
 </template>
 
@@ -196,7 +211,72 @@ const handleCarousel = () => {
   position: absolute;
   bottom: 20px;
   left: 20px;
-  z-index: 999;
+  z-index: 500;
+}
+
+.menu-btns {
+  position: absolute;
+  top: 70px;
+  right: 10px;
+  z-index: 500;
+  display: flex;
+
+  button,
+  .nav .menu-item {
+    height: 35px;
+    padding: 0 24px;
+    margin-left: 20px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 35px;
+    color: #fff;
+    text-align: center;
+    background-image: linear-gradient(
+      -29deg,
+      rgb(7 29 78 / 73%) 0%,
+      rgb(17 84 238 / 98%) 100%
+    );
+    border: 1px solid #1795ff;
+    border-radius: 16px;
+
+    &:hover {
+      color: rgb(148 163 184);
+      cursor: pointer;
+    }
+  }
+
+  .nav {
+    position: relative;
+
+    .sub-menu {
+      position: absolute;
+      bottom: -148px;
+      left: calc((150px - 100%) / 2);
+      display: none;
+      width: 140px;
+      height: 146px;
+      padding: 2px;
+      background: center / cover no-repeat url('./assets/imgs/menu-bg.svg');
+
+      div {
+        font-size: 16px;
+        line-height: 29px;
+        color: #ddfbff;
+        text-align: center;
+
+        &:hover {
+          color: rgb(100 116 139);
+          cursor: pointer;
+        }
+      }
+    }
+
+    &:hover {
+      .sub-menu {
+        display: block;
+      }
+    }
+  }
 }
 
 div {
