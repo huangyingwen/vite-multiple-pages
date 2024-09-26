@@ -17,7 +17,7 @@ onMounted(() => {
 });
 
 const getData = async () => {
-  const res = await fetch('http://192.168.1.221:8080/storage/total/converge');
+  const res = await fetch('http://192.168.1.202:8080/storage/total/converge');
   const result = await res.json();
   data.value = result.data;
   animation.value = true;

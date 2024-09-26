@@ -458,6 +458,7 @@ div {
       color: #fff;
       letter-spacing: 7px;
       background-image: url('./assets/imgs/1.svg');
+      padding-right: 30px;
 
       span {
         display: inline-block;
@@ -488,7 +489,7 @@ div {
       align-items: center;
       width: 280px;
       height: 44px;
-      padding: 0 1px 0 20px;
+      padding: 0 24px 0 10px;
       margin-left: 18px;
       background-image: url('./assets/imgs/5.svg');
       background-repeat: no-repeat;
