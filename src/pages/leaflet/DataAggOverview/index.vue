@@ -1,13 +1,36 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import CloseIcon from './imgs/close.svg';
 
 const show = ref(false);
+const animation = ref(false);
+let timeId: number;
 
 const handleShow = () => {
   show.value = true;
 };
-onMounted(() => {});
+
+const data = ref<any[]>([]);
+
+onMounted(() => {
+  getData();
+});
+
+const getData = async () => {
+  const res = await fetch('http://192.168.1.221:8080/storage/total/converge');
+  const result = await res.json();
+  data.value = result.data;
+  animation.value = true;
+
+  setTimeout(() => (animation.value = false), 3 * 1000);
+
+  timeId = setTimeout(getData, 5 * 1000) as unknown as number;
+};
+
+onUnmounted(() => {
+  timeId && clearTimeout(timeId);
+  timeId = 0;
+});
 </script>
 
 <template>
@@ -19,27 +42,30 @@ onMounted(() => {});
       </div>
     </div>
     <div class="content">
-      <div class="category">
-        <div class="category-title">水文数据</div>
+      <div v-for="item of data" :key="item.groupName" class="category">
+        <div class="category-title">{{ item.groupName }}</div>
         <div class="category-content">
-          <div class="card">
-            <div class="card-data">2024-08-10</div>
-            <div class="card-icon"></div>
-            <div class="card-title">业务系统</div>
-          </div>
-          <div class="card purple">
-            <div class="card-data">2024-08-10</div>
-            <div class="card-icon"></div>
-            <div class="card-title">实时数据</div>
-            <Transition name="slide-fade">
-              <div class="card-increase">+100000</div>
-            </Transition>
-          </div>
-          <div class="card">
-            <div class="card-data">2024-08-10</div>
-            <div class="card-icon"></div>
-            <div class="card-title">业务系统</div>
-          </div>
+          <template v-for="subItem of item.sonList" :key="subItem.name">
+            <div v-if="subItem.type === 'false'" class="card">
+              <div class="card-data">{{ subItem.lastTime }}</div>
+              <div class="card-icon"></div>
+              <div class="card-title">{{ subItem.name }}</div>
+            </div>
+            <div v-else class="card purple" :class="{ light: animation }">
+              <div class="card-data">
+                {{
+                  subItem.total
+                    .toString()
+                    .replace(/(\d)(?=(?:\d{3})+$)/g, '$1,')
+                }}
+              </div>
+              <div class="card-icon"></div>
+              <div class="card-title">{{ subItem.name }}</div>
+              <Transition v-show="animation" name="slide-fade">
+                <div class="card-increase">+{{ subItem.increment }}</div>
+              </Transition>
+            </div>
+          </template>
         </div>
       </div>
     </div>
@@ -66,11 +92,7 @@ onMounted(() => {});
   height: 44px;
   padding: 0 20px;
   background: linear-gradient(270deg, rgb(0 16 255 / 0%) 0%, #3765d9 95%),
-    linear-gradient(
-      270deg,
-      rgb(24 39 111 / 0%) 48%,
-      rgb(22 69 210 / 70%) 99%
-    );
+    linear-gradient(270deg, rgb(24 39 111 / 0%) 48%, rgb(22 69 210 / 70%) 99%);
   opacity: 0.34;
 
   .title {
@@ -93,6 +115,33 @@ onMounted(() => {});
 
 .content {
   padding: 30px 18px;
+  overflow-x: auto;
+  height: calc(100% - 104px);
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    opacity: 0.4;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgb(100 100 100);
+    border-radius: 3px;
+    opacity: 0.4;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #ffffff;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb:active {
+    background: #ffffff;
+    border-radius: 3px;
+  }
 }
 
 .category {
@@ -244,8 +293,7 @@ onMounted(() => {});
 
   .card-title {
     color: #f8f7ff;
-    text-shadow: 0 2px 6px rgb(0 0 0 / 82%),
-      0 1px 2px rgb(163 39 255 / 50%);
+    text-shadow: 0 2px 6px rgb(0 0 0 / 82%), 0 1px 2px rgb(163 39 255 / 50%);
   }
 
   .card-increase {
