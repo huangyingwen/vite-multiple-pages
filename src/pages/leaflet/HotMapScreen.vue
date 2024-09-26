@@ -240,7 +240,10 @@ const countNum = computed(() => {
 
       <div class="day-count">
         <div class="day-count-wrap">
-          {{ date.d }}天{{ date.h }}时{{ date.m }}分{{ date.s }}秒
+          <span>{{ date.d }}</span>
+          <span>{{ date.h.toString().padStart(2, '0') }}</span>
+          <span>{{ date.m.toString().padStart(2, '0') }}</span>
+          <span>{{ date.s.toString().padStart(2, '0') }}</span>
         </div>
       </div>
       <div class="data-count">
@@ -449,20 +452,43 @@ div {
       display: flex;
       align-items: center;
       justify-content: right;
-      width: 198px;
+      width: 355px;
       height: 44px;
-      padding-right: 8px;
-      font-size: 14px;
+      font-size: 22px;
       color: #fff;
+      letter-spacing: 7px;
       background-image: url('./assets/imgs/1.svg');
+
+      span {
+        display: inline-block;
+        text-align: right;
+      }
+
+      span:nth-child(4) {
+        width: 39px;
+      }
+
+      span:nth-child(3) {
+        width: 39px;
+        margin-right: 21px;
+      }
+
+      span:nth-child(2) {
+        width: 39px;
+        margin-right: 24px;
+      }
+
+      span:nth-child(1) {
+        margin-right: 24px;
+      }
     }
 
     .data-count {
       display: flex;
       align-items: center;
-      width: 358px;
+      width: 280px;
       height: 44px;
-      padding: 0 9px 0 20px;
+      padding: 0 1px 0 20px;
       margin-left: 18px;
       background-image: url('./assets/imgs/5.svg');
       background-repeat: no-repeat;
@@ -472,10 +498,10 @@ div {
         flex: 1;
         align-items: baseline;
         width: 210px;
-        font-size: 24px;
+        font-size: 22px;
         color: #fff;
         text-align: right;
-        letter-spacing: 0.44px;
+        letter-spacing: 8px;
 
         > div {
           flex: 1;
