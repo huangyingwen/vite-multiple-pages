@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="155.435407px" height="35px" viewBox="0 0 155.435407 35" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 16</title>
+    <defs>
+        <linearGradient x1="81.7992198%" y1="56.3790397%" x2="41.2284534%" y2="43.4040428%" id="linearGradient-1">
+            <stop stop-color="#071D4E" stop-opacity="0.734730114" offset="0%"></stop>
+            <stop stop-color="#1154EE" stop-opacity="0.982899913" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="舟山海洋大数据中心" transform="translate(-1244.454545, -298.875000)">
+            <g id="编组-16" transform="translate(1244.454545, 298.875000)">
+                <rect id="矩形" stroke="#1795FF" fill="url(#linearGradient-1)" x="0.5" y="3.875" width="154.435407" height="27" rx="13.5"></rect>
+                <text id="数据汇聚概览" opacity="0.953999996" font-family="PingFangSC-Regular, PingFang SC" font-size="16" font-weight="normal" line-spacing="34.574398" fill="#DDFBFF">
+                    <tspan x="31.8181818" y="17">数据汇聚概览</tspan>
+                </text>
+            </g>
+        </g>
+    </g>
+</svg>

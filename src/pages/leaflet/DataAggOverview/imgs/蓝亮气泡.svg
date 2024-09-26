@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="105.6px" height="32.8408327px" viewBox="0 0 105.6 32.8408327" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>形状结合</title>
+    <defs>
+        <filter x="-11.1%" y="-8.1%" width="122.2%" height="119.7%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="3" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.822361233 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+        <linearGradient x1="3.05102849%" y1="49.8760049%" x2="85.9325126%" y2="50.1090427%" id="linearGradient-2">
+            <stop stop-color="#459CFF" stop-opacity="0.592001748" offset="0%"></stop>
+            <stop stop-color="#4DB4FF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-3">
+            <stop stop-color="#AFD8FA" offset="0%"></stop>
+            <stop stop-color="#C6CFFC" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.671257448" stroke-dasharray="0,0">
+        <g id="数据汇聚概览1" transform="translate(-677.700000, -485.700000)" fill="url(#linearGradient-2)" fill-rule="nonzero" stroke="url(#linearGradient-3)" stroke-width="0.6">
+            <g id="编组-14" transform="translate(493.000000, 182.000000)">
+                <g id="编组-14备份-4" filter="url(#filter-1)" transform="translate(191.000000, 308.000000)">
+                    <path d="M93,0 L93,17 L48.666,17 L46.6666667,20 L44.666,17 L0,17 L0,0 L93,0 Z" id="形状结合"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

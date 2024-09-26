@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80.6px" height="20.8408327px" viewBox="0 0 80.6 20.8408327" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>形状结合备份</title>
+    <defs>
+        <linearGradient x1="5.03431575%" y1="49.8399682%" x2="85.9325126%" y2="50.147361%" id="linearGradient-1">
+            <stop stop-color="#000EFF" stop-opacity="0" offset="0%"></stop>
+            <stop stop-color="#7B38A6" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#6148FF" offset="0%"></stop>
+            <stop stop-color="#BA60FC" offset="97.885708%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.795177641" stroke-dasharray="0,0">
+        <g id="数据汇聚概览1" transform="translate(-833.700000, -489.700000)" fill="url(#linearGradient-1)" fill-rule="nonzero" stroke="url(#linearGradient-2)" stroke-width="0.6">
+            <g id="编组-14" transform="translate(493.000000, 182.000000)">
+                <g id="编组-13备份-2" transform="translate(341.000000, 308.000000)">
+                    <path d="M80,0 L80,17 L41.666,17 L39.6666667,20 L37.666,17 L0,17 L0,0 L80,0 Z" id="形状结合备份" opacity="0.498452388"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -10,6 +10,7 @@ import './L.Icon.Pulse.css';
 import './L.Icon.Pulse.js';
 import loadMap, { addHotMapLayer, addMapCarousel } from './loadMap.js';
 import { getColor } from './utils.js';
+import useMarks from './useMarks.js';
 
 const refMap = ref<HTMLElement>();
 const map = ref<L.Map>();
@@ -19,7 +20,7 @@ const carousel = ref(false);
 const dayCount = ref(346);
 const countNum = ref(0);
 const startDay = dayjs('2023-09-01');
-let start = dayjs('2024-08-09  20:28:00');
+let start = dayjs('2024-08-09 20:28:00');
 
 const markers: Record<string, { marker: L.CircleMarker; count: number }> = {};
 const markerPulses: Record<number, L.Marker> = {};
@@ -28,16 +29,29 @@ const addCarousel = addMapCarousel();
 const myRenderer = L.canvas({ padding: 0.5 });
 const date = ref({ d: 0, h: 0, m: 0, s: 0 });
 
+// ais、radar、fly、bd
+const [aisStartFunc, aisStopFunc, aisCount] = useMarks(map, 'ais', area);
+const [radarStartFunc, radarStopFunc, radarCount] = useMarks(
+  map,
+  'radar',
+  area,
+);
+const [flyStartFunc, flyStopFunc, flyCount] = useMarks(map, 'fly', area);
+const [bdStartFunc, bdStopFunc, bdCount] = useMarks(map, 'bd', area);
+const markType = ref('ais');
+
 onMounted(async () => {
   const query = qs.parse(window.location.search, { ignoreQueryPrefix: true });
   area.value = (query.area || 'zhoushan') as any;
+  markType.value = (query.type || 'ais') as any;
   // await initData();
   // await getData();
   statisticalTime();
 
-  map.value = loadMap(refMap.value!, area.value);
+  if (!refMap.value) return;
 
-  getData();
+  map.value = loadMap(refMap.value, area.value);
+  startFunc(markType.value);
 });
 
 function statisticalTime() {
@@ -139,6 +153,43 @@ const handleCarousel = () => {
   carousel.value = !carousel.value;
   addCarousel(map.value!, area.value);
 };
+
+const startFunc = (type = 'ais') => {
+  markType.value = type;
+  if (['radar', 'fly', 'bd'].includes(type) && area.value === 'world') {
+    window.location.href = `/leaflet?screen=1&area=zhoushan&type=${type}`;
+  }
+  switch (type) {
+    case 'ais':
+      countNum.value = aisCount.value;
+      aisStartFunc();
+      radarStopFunc();
+      flyStopFunc();
+      bdStopFunc();
+      break;
+    case 'radar':
+      countNum.value = radarCount.value;
+      radarStartFunc();
+      aisStopFunc();
+      flyStopFunc();
+      bdStopFunc();
+      break;
+    case 'fly':
+      countNum.value = flyCount.value;
+      flyStartFunc();
+      aisStopFunc();
+      radarStopFunc();
+      bdStopFunc();
+      break;
+    case 'bd':
+      countNum.value = bdCount.value;
+      bdStartFunc();
+      aisStopFunc();
+      radarStopFunc();
+      flyStopFunc();
+      break;
+  }
+};
 </script>
 
 <template>
@@ -185,11 +236,31 @@ const handleCarousel = () => {
           <div class="nav">
             <div class="menu-item">态势上图</div>
             <div class="sub-menu">
-              <div>AIS目标</div>
-              <div>雷达目标</div>
-              <div>低空目标</div>
-              <div>示位仪目标</div>
-              <div>卫星遥感</div>
+              <div
+                :class="{ selected: markType === 'ais' }"
+                @click="startFunc('ais')"
+              >
+                AIS目标
+              </div>
+              <div
+                :class="{ selected: markType === 'radar' }"
+                @click="startFunc('radar')"
+              >
+                雷达目标
+              </div>
+              <div
+                :class="{ selected: markType === 'fly' }"
+                @click="startFunc('fly')"
+              >
+                低空目标
+              </div>
+              <div
+                :class="{ selected: markType === 'bd' }"
+                @click="startFunc('bd')"
+              >
+                示位仪目标
+              </div>
+              <div :class="{ selected: markType === 'sss' }">卫星遥感</div>
             </div>
           </div>
           <button @click="slotProps.handleShow">数据汇聚概览</button>
@@ -264,8 +335,12 @@ const handleCarousel = () => {
         color: #ddfbff;
         text-align: center;
 
-        &:hover {
+        &:hover,
+        &.selected {
           color: rgb(100 116 139);
+        }
+
+        &:hover {
           cursor: pointer;
         }
       }
