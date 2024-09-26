@@ -169,6 +169,8 @@ watch(
   },
   { deep: true },
 );
+
+const handleGoBack = () => (window.location.href = '/leaflet?screen=1');
 </script>
 
 <template>
@@ -286,6 +288,7 @@ watch(
           </div>
         </div>
       </div>
+      <div v-show="!show" class="goback-btn" @click="handleGoBack">返回</div>
       <div v-show="!show" class="search-btn" @click="() => (show = !show)">
         搜索
       </div>
@@ -313,7 +316,8 @@ watch(
   border: 1px solid #2a96e8;
 }
 
-.search-btn {
+.search-btn,
+.goback-btn {
   position: absolute;
   top: 10px;
   left: 10px;
@@ -340,6 +344,11 @@ watch(
   }
 }
 
+.goback-btn {
+  top: 10px;
+  left: 110px;
+}
+
 .title {
   display: flex;
   align-items: center;
@@ -352,11 +361,7 @@ watch(
   text-shadow: 0 2px 4px rgb(46 193 255 / 50%);
   background: #334d76;
   background: rgb(5 35 67 / 80%);
-  background-image: linear-gradient(
-    270deg,
-    rgb(0 16 255 / 0%) 0%,
-    #3765d9 95%
-  );
+  background-image: linear-gradient(270deg, rgb(0 16 255 / 0%) 0%, #3765d9 95%);
   background-image: linear-gradient(
     270deg,
     rgb(24 39 111 / 0%) 48%,

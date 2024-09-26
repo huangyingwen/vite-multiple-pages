@@ -2,8 +2,10 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import RemoteSensing from './RemoteSensing.vue';
 import { Select, Row, Col, DatePicker, Table } from 'ant-design-vue';
+import qs from 'qs';
 
-const app = createApp(RemoteSensing);
+const query = qs.parse(window.location.search, { ignoreQueryPrefix: true });
+const app = createApp(query.yagan ? RemoteSensing : App);
 
 const appEl = document.createElement('div');
 appEl.className = 'rootcon';

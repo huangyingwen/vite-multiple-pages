@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import qs from 'qs';
 import legendSvg from './assets/legend.svg';
 import dayjs from 'dayjs';
@@ -18,7 +18,6 @@ const area = ref<'world' | 'zhoushan'>('zhoushan');
 const hotmap = ref(false);
 const carousel = ref(false);
 const dayCount = ref(346);
-const countNum = ref(0);
 const startDay = dayjs('2023-09-01');
 let start = dayjs('2024-08-09 20:28:00');
 
@@ -44,8 +43,6 @@ onMounted(async () => {
   const query = qs.parse(window.location.search, { ignoreQueryPrefix: true });
   area.value = (query.area || 'zhoushan') as any;
   markType.value = (query.type || 'ais') as any;
-  // await initData();
-  // await getData();
   statisticalTime();
 
   if (!refMap.value) return;
@@ -146,12 +143,12 @@ const handleClick = (_area: string) => {
 
 const handleHotmap = () => {
   hotmap.value = !hotmap.value;
-  addHotmap(map.value!, area.value);
+  addHotmap(map.value!, area.value, markType.value);
 };
 
 const handleCarousel = () => {
   carousel.value = !carousel.value;
-  addCarousel(map.value!, area.value);
+  addCarousel(map.value!, area.value, markType.value);
 };
 
 const startFunc = (type = 'ais') => {
@@ -161,35 +158,59 @@ const startFunc = (type = 'ais') => {
   }
   switch (type) {
     case 'ais':
-      countNum.value = aisCount.value;
       aisStartFunc();
       radarStopFunc();
       flyStopFunc();
       bdStopFunc();
       break;
     case 'radar':
-      countNum.value = radarCount.value;
       radarStartFunc();
       aisStopFunc();
       flyStopFunc();
       bdStopFunc();
       break;
     case 'fly':
-      countNum.value = flyCount.value;
       flyStartFunc();
       aisStopFunc();
       radarStopFunc();
       bdStopFunc();
       break;
     case 'bd':
-      countNum.value = bdCount.value;
       bdStartFunc();
       aisStopFunc();
       radarStopFunc();
       flyStopFunc();
       break;
+    case 'yagan':
+      window.location.href = '/leaflet?yagan=1';
+      break;
+  }
+
+  if (carousel.value) {
+    addCarousel(map.value!, area.value, markType.value);
+    addCarousel(map.value!, area.value, markType.value);
+  }
+
+  if (hotmap.value) {
+    addHotmap(map.value!, area.value, markType.value);
+    addHotmap(map.value!, area.value, markType.value);
   }
 };
+
+const countNum = computed(() => {
+  switch (markType.value) {
+    case 'ais':
+      return aisCount.value;
+    case 'radar':
+      return radarCount.value;
+    case 'fly':
+      return flyCount.value;
+    case 'bd':
+      return bdCount.value;
+    default:
+      return 0;
+  }
+});
 </script>
 
 <template>
@@ -260,7 +281,12 @@ const startFunc = (type = 'ais') => {
               >
                 示位仪目标
               </div>
-              <div :class="{ selected: markType === 'sss' }">卫星遥感</div>
+              <div
+                :class="{ selected: markType === 'yagan' }"
+                @click="startFunc('yagan')"
+              >
+                卫星遥感
+              </div>
             </div>
           </div>
           <button @click="slotProps.handleShow">数据汇聚概览</button>

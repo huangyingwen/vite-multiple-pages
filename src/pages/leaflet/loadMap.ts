@@ -48,9 +48,21 @@ export default function loadMap(
   return map;
 }
 
+const urlMap = {
+  zhoushan: {
+    ais: 'aisZhoushan',
+    radar: 'radarZhoushan',
+    fly: 'dikongZhoushan',
+    bd: 'beidouZhoushan',
+  },
+  world: {
+    ais: 'aisWorld',
+  },
+};
+
 export function addHotMapLayer() {
   let layer: L.Layer | undefined;
-  return (map: L.Map, area: 'zhoushan' | 'world') => {
+  return (map: L.Map, area: 'zhoushan' | 'world', type: string) => {
     if (layer) {
       layer.remove();
       layer = undefined;
@@ -59,8 +71,8 @@ export function addHotMapLayer() {
 
     layer = L.tileLayer(
       `http://192.168.1.199:5801/tileMap/${
-        area === 'zhoushan' ? 'aisZhoushan' : 'aisWorld'
-      }/summonth?x={x}&y={y}&z={z}&months=1`,
+        urlMap[area][type] as any
+      }/summonth?x={x}&y={y}&z={z}&months=12`,
     ).addTo(map);
   };
 }
@@ -68,24 +80,16 @@ export function addHotMapLayer() {
 export function addMapCarousel() {
   let timeId: number | undefined;
   let months = 1;
-  const picks = 1;
   let hotmaplayer: L.Layer | undefined;
 
-  return (map: L.Map, area: 'zhoushan' | 'world') => {
+  return (map: L.Map, area: 'zhoushan' | 'world', type: string) => {
     function getHeatmap() {
-      const flag2 = 'summonth';
-      let url = '';
-
-      if (flag2 === 'summonth') {
-        url = `x={x}&y={y}&z={z}&months=${months}`;
-      } else if (flag2 === 'picktime') {
-        url = `x={x}&y={y}&z={z}&picks=${picks}`;
-      }
+      const url = `x={x}&y={y}&z={z}&months=${months}`;
 
       return L.tileLayer(
         `http://192.168.1.199:5801/tileMap/${
-          area === 'zhoushan' ? 'aisZhoushan' : 'aisWorld'
-        }/${flag2}?${url}`,
+          urlMap[area][type] as any
+        }/summonth?${url}`,
       ).addTo(map);
     }
 
