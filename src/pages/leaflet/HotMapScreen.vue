@@ -239,17 +239,21 @@ const countNum = computed(() => {
       </div>
 
       <div class="day-count">
-        <div class="day-count-wrap">
-          <span>{{ date.d }}</span>
-          <span>{{ date.h.toString().padStart(2, '0') }}</span>
-          <span>{{ date.m.toString().padStart(2, '0') }}</span>
-          <span>{{ date.s.toString().padStart(2, '0') }}</span>
+        <div>
+          <span v-for="n of date.d.toString()">{{ n }}</span>
+        </div>
+        <div>
+          <span v-for="n of date.h.toString().padStart(2, '0')">{{ n }}</span>
+        </div>
+        <div>
+          <span v-for="n of date.m.toString().padStart(2, '0')">{{ n }}</span>
+        </div>
+        <div>
+          <span v-for="n of date.s.toString().padStart(2, '0')">{{ n }}</span>
         </div>
       </div>
       <div class="data-count">
-        <div class="data-count-num">
-          <div>{{ countNum }}</div>
-        </div>
+        <span v-for="n of countNum.toString()">{{ n }}</span>
       </div>
     </div>
     <div ref="refMap" class="cssc-map"></div>
@@ -456,65 +460,56 @@ div {
       height: 44px;
       font-size: 22px;
       color: #fff;
-      letter-spacing: 7px;
       background-image: url('./assets/imgs/1.svg');
-      padding-right: 30px;
+
+      div {
+        display: flex;
+        gap: 3px;
+        text-align: center;
+      }
+
+      div:nth-child(4) {
+        margin-right: 34px;
+      }
+
+      div:nth-child(3) {
+        margin-right: 24px;
+      }
+
+      div:nth-child(2) {
+        margin-right: 25px;
+      }
+
+      div:nth-child(1) {
+        margin-right: 26px;
+      }
 
       span {
         display: inline-block;
-        text-align: right;
-      }
-
-      span:nth-child(4) {
-        width: 39px;
-      }
-
-      span:nth-child(3) {
-        width: 39px;
-        margin-right: 21px;
-      }
-
-      span:nth-child(2) {
-        width: 39px;
-        margin-right: 24px;
-      }
-
-      span:nth-child(1) {
-        margin-right: 24px;
+        width: 17px;
+        text-align: center;
       }
     }
 
     .data-count {
       display: flex;
+      gap: 3px;
       align-items: center;
+      justify-content: flex-end;
       width: 280px;
       height: 44px;
-      padding: 0 24px 0 10px;
+      padding-right: 31px;
       margin-left: 18px;
+      font-size: 22px;
+      color: #fff;
       background-image: url('./assets/imgs/5.svg');
       background-repeat: no-repeat;
 
-      &-num {
-        display: flex;
-        flex: 1;
-        align-items: baseline;
-        width: 210px;
-        font-size: 22px;
-        color: #fff;
-        text-align: right;
-        letter-spacing: 8px;
-
-        > div {
-          flex: 1;
-          text-align: right;
-        }
-
-        .data-count-uint {
-          flex: unset;
-          padding-left: 4px;
-          font-size: 14px;
-          color: #999;
-        }
+      > span {
+        display: inline-block;
+        width: 17px;
+        text-align: center;
+        letter-spacing: 0;
       }
     }
   }

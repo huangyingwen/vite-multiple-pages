@@ -43,7 +43,9 @@ onUnmounted(() => {
     </div>
     <div class="content">
       <div v-for="item of data" :key="item.groupName" class="category">
-        <div class="category-title">{{ item.groupName }}</div>
+        <div class="category-title">
+          {{ item.groupName }}（{{ item.sonList?.length || 0 }}）
+        </div>
         <div class="category-content">
           <template v-for="subItem of item.sonList" :key="subItem.name">
             <div v-if="subItem.type === 'false'" class="card">
@@ -114,17 +116,17 @@ onUnmounted(() => {
 }
 
 .content {
+  height: calc(100% - 104px);
   padding: 30px 18px;
   overflow-x: auto;
-  height: calc(100% - 104px);
 
   &::-webkit-scrollbar {
     width: 5px;
   }
 
   &::-webkit-scrollbar-track {
-    opacity: 0.4;
     border-radius: 3px;
+    opacity: 0.4;
   }
 
   &::-webkit-scrollbar-thumb {
@@ -134,12 +136,12 @@ onUnmounted(() => {
   }
 
   &::-webkit-scrollbar-thumb:hover {
-    background: #ffffff;
+    background: #fff;
     border-radius: 3px;
   }
 
   &::-webkit-scrollbar-thumb:active {
-    background: #ffffff;
+    background: #fff;
     border-radius: 3px;
   }
 }
@@ -169,7 +171,8 @@ onUnmounted(() => {
 
   &-content {
     display: flex;
-    gap: 61px;
+    flex-wrap: wrap;
+    gap: 20px 61px;
     padding: 22px 26px;
   }
 }
