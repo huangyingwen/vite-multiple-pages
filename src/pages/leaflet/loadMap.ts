@@ -35,7 +35,7 @@ export default function loadMap(
 
   if (area === 'zhoushan') {
     borders.data.forEach(border => {
-      L.polyline(
+      L.polygon(
         border.points.map(point => [
           Number(point.latitude),
           Number(point.longitude),
