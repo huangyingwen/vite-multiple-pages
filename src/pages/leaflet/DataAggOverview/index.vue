@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onUnmounted, ref, watchEffect } from 'vue';
 import CloseIcon from './imgs/close.svg';
 
 const show = ref(false);
@@ -12,7 +12,12 @@ const handleShow = () => {
 
 const data = ref<any[]>([]);
 
-onMounted(() => {
+watchEffect(() => {
+  if (!show.value) {
+    timeId && clearTimeout(timeId);
+    timeId = 0;
+    return;
+  }
   getData();
 });
 
