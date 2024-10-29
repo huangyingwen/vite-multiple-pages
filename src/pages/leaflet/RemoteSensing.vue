@@ -49,6 +49,18 @@ onMounted(() => {
     selectionIndicator: false,
   });
 
+  viewer.camera.flyTo({
+    destination: Cesium.Cartesian3.fromDegrees(103.84, 31.15, 17850000),
+    orientation: {
+      heading: Cesium.Math.toRadians(348.4202942851978),
+      pitch: Cesium.Math.toRadians(-89.74026687972041),
+      roll: Cesium.Math.toRadians(0),
+    },
+    complete: function callback() {
+      // 定位完成之后的回调函数
+    },
+  });
+
   viewer.cesiumWidget.creditContainer.remove();
   map.value = viewer;
 
